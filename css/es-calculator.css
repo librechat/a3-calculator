@@ -47,7 +47,6 @@ caption{
 	overflow-x:auto;
 	overflow-y:scroll;
 	display:block;
-	margin-right: -3px;
 }
 .tab-content>.active{
 	padding: 5px;
