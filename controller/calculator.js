@@ -39,7 +39,7 @@ card_less = function(card, color, pivot){
 	else value = card[color];
 	return value < pivot;
 }
-calculate_total = function(team, skill){
+calculate_total = function(team, skill, eventgroup){
 	var sum = 0;
 	var buffs = 1;
 	var buff_name = '';
@@ -65,12 +65,25 @@ calculate_total = function(team, skill){
 			buff_name = (buff_name.length === 0)? value.name: buff_name + '+' + value.name;
 		}
 	});
-	team.total = Math.floor(sum * buffs);
+
+	//same team buff: $scope.eventgroup
+	var groupbuff = 0;
+	if(eventgroup != -1){
+		var gp = data.group[eventgroup];
+		for(var i=0; i<team.members.length; i++){
+			if(gp.indexOf(team.members[i].character) !== -1) groupbuff += 2.5;
+		}
+	}
+	groupbuff = 1 + groupbuff / 100;
+	
+
+	team.total = Math.floor(sum * buffs * groupbuff);
 	team.skillbuff = buffs.toFixed(2);
+	team.groupbuff = groupbuff.toFixed(3);
 	team.skillname = (buff_name.length === 0)? '無技能': buff_name;
 	return team.total;
 }
-arrange = function(color, cards, skill, origin_skill, usedcards_index, guest){
+arrange = function(color, cards, skill, origin_skill, usedcards_index, guest, eventgroup){
 	//prepare skills
 	var ableteam = [];
 	skill = skill.filter(function(skl){
@@ -131,7 +144,7 @@ arrange = function(color, cards, skill, origin_skill, usedcards_index, guest){
 	var max_team = null;
 	ableteam.forEach(function(team){
 		//calculate
-		total = calculate_total(team, origin_skill);
+		total = calculate_total(team, origin_skill, eventgroup);
 
 		//check if leader has correct color
 		var leader_exist = false;

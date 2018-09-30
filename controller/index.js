@@ -21,7 +21,7 @@ app.controller("CardGroup", ["$scope", function($scope){
 	$scope.guest = null;
 
 	$scope.skill = {};
-	$scope.eventbuff = 0;
+	$scope.eventgroup = -1;
 	$scope.color = 'gray';
 	$scope.cardcount = 5;
 	$scope.groupstyle = 3;
@@ -88,7 +88,7 @@ app.controller("CardGroup", ["$scope", function($scope){
 	$scope.calculate = function(){
 		var color = $scope.color;
 		console.log($scope.teams[color].members.length);
-		calculator.calculate_total($scope.teams[color], $scope.skill[color]);
+		calculator.calculate_total($scope.teams[color], $scope.skill[color], $scope.eventgroup);
 	}
 	$scope.changecolor = function(color){
 		$scope.color = color;
@@ -128,7 +128,7 @@ app.controller("CardGroup", ["$scope", function($scope){
 		calculator.sort_cards(cards, color, 0, cards.length-1);
 		//concept: max('skill') = (sum(skill_members)+sum(others)) * (100+buff)%
 		var usedcards_index = [];
-		$scope.teams[color] = calculator.arrange(color, cards, skill, $scope.skill[color], usedcards_index, guest_member);
+		$scope.teams[color] = calculator.arrange(color, cards, skill, $scope.skill[color], usedcards_index, guest_member, $scope.eventgroup);
 		return;
 	}
 	$scope.clear = function(){

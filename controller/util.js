@@ -21,7 +21,8 @@ const member_template = {
 const team_template = {
     total: 0,
     skillname: '無技能',
-    skillbuff: 1, 
+    skillbuff: 1,
+    groupbuff: 1,
     members:[]
 };
 const colors = ['red', 'blue', 'yellow'];

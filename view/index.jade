@@ -44,7 +44,7 @@ html
 				.tab-content(ng-class="{'gray': 'gray-bg', 'red': 'red-bg', 'blue': 'blue-bg', 'yellow': 'yellow-bg'}[color]")
 					.tab-pane.active#card(role="tabpanel")
 						.alert.alert-danger.right-align.small-alert#arrangealert(role="alert") {{warning_msg}}
-						.tablescroller-head
+						.tablescroller-body
 							table.table.table-bordered.text-center.white-bg
 								tbody
 									tr
@@ -56,12 +56,12 @@ html
 										td.col-md-5
 											.btn-group-sm.right-align(role="group" aria-label="cards-operation")
 												span 同組加成
-												select.form-control.input-sm(style="padding:1px; width:160px;" ng-model="eventbuff" option-value)
-													option(value=0) 無
-													option(value=1) 春組
-													option(value=2) 夏組
-													option(value=3) 秋組
-													option(value=4) 冬組
+												select.form-control.input-sm(style="padding:1px; width:160px;" ng-model="eventgroup" option-value)
+													option(value=-1) 無
+													option(value=0) 春組
+													option(value=1) 夏組
+													option(value=2) 秋組
+													option(value=3) 冬組
 												input.custom-file-input(name="cardfile" type="file" id="uploadfile" placeholder="匯入" custom-file-change="upload")
 												label.btn.btn-secondary.custom-file-label(for="uploadfile") 匯入
 												button.btn.btn-secondary(type="button" ng-click="download()") 匯出
@@ -115,7 +115,7 @@ html
 													| 旬卡
 										td.col-md-1
 						.tablescroller-line
-						.tablescroller-body
+						.tablescroller-body(style="height=55vh;")
 							table.table.table-bordered.text-center.white-bg
 								tbody
 									tr(ng-repeat="card in cards track by $index")
@@ -172,47 +172,50 @@ html
 										td.col-md-1
 											span 加成倍率
 										td.col-md-1
+											span 連鎖 
 											span(ng-bind="teams[color].skillbuff")
-										td.col-md-6
+										td.col-md-1
+											span 同組 
+											span(ng-bind="teams[color].groupbuff")
+										td.col-md-5
 											span(ng-bind="teams[color].skillname")
 										td.col-md-2
 											span 客演角色
 						.tablescroller-line
-						.tablescroller-body
-							table.table.table-bordered.text-center.white-bg(ng-class="{'red': 'red-line', 'blue': 'blue-line', 'yellow': 'yellow-line', 'gray': 'gray-line'}[color]")
-								tbody
-									tr
-										td.col-md-2(ng-repeat="member in teams[color].members")
-											.row
-												.buff-card.col-md-4(style="padding: 1px;  line-height:30px;")
-													.checkbox.input-sm(style="padding: 0px; margin: 0px; height:20px;")
-														label
-															input(type="checkbox" ng-model="member.event" ng-change="calculate()")
-															| 旬卡
-												.star.col-md-4(style="padding:1px;")
-													select.form-control.input-sm(style="padding:1px;" ng-model="member.star" option-value)
-														option(value=1) N
-														option(value=2) R
-														option(value=3) SR
-														option(value=4) SSR
-												.card-count.col-md-4(style="padding:1px;")
-													select.form-control.input-sm(style="padding:1px;" ng-model="member.dupe" ng-change="calculate()" option-value)
-														option(value=0) 零花
-														option(value=1) 一花
-														option(value=2) 滿開
-											.character
-												select.form-control.input-sm(ng-model="member.character" type="text" ng-change="calculate()")
-													option(value="" disabled selected) 選擇角色
-													option(value="") 無
-													option(ng-repeat="character in characters") {{character}}
-											.card-name
-												span 【
-												input.form-control.input-sm(ng-model="member.cardname" type="text" placeholder="卡片名稱")
-												span  】
-											.row.crowded-row
-												.value(ng-class="{true: 'col-md-5 crowded-col', false: 'col-md-12'}[member.event]")
-													input.form-control.wide.input-sm(ng-model="member.value" type="number" min="0" ng-change="calculate()")
-												.value(ng-class="{true: 'col-md-2  crowded-col', false: 'hidden'}[member.event]")
-													span.glyphicon.glyphicon-arrow-right.vertical-middle
-												.value(ng-class="{true: 'col-md-5  crowded-col', false: 'hidden'}[member.event]")
-													input.form-control.wide.input-sm(placeholder="{{member.value * (2 + member.dupe * 0.5)| floor}}" disabled)
+						table.table.table-bordered.text-center.white-bg(ng-class="{'red': 'red-line', 'blue': 'blue-line', 'yellow': 'yellow-line', 'gray': 'gray-line'}[color]")
+							tbody
+								tr
+									td.col-md-2(ng-repeat="member in teams[color].members")
+										.row
+											.buff-card.col-md-4(style="padding: 1px;  line-height:30px;")
+												.checkbox.input-sm(style="padding: 0px; margin: 0px; height:20px;")
+													label
+														input(type="checkbox" ng-model="member.event" ng-change="calculate()")
+														| 旬卡
+											.star.col-md-4(style="padding:1px;")
+												select.form-control.input-sm(style="padding:1px;" ng-model="member.star" option-value)
+													option(value=1) N
+													option(value=2) R
+													option(value=3) SR
+													option(value=4) SSR
+											.card-count.col-md-4(style="padding:1px;")
+												select.form-control.input-sm(style="padding:1px;" ng-model="member.dupe" ng-change="calculate()" option-value)
+													option(value=0) 零花
+													option(value=1) 一花
+													option(value=2) 滿開
+										.character
+											select.form-control.input-sm(ng-model="member.character" type="text" ng-change="calculate()")
+												option(value="" disabled selected) 選擇角色
+												option(value="") 無
+												option(ng-repeat="character in characters") {{character}}
+										.card-name
+											span 【
+											input.form-control.input-sm(ng-model="member.cardname" type="text" placeholder="卡片名稱")
+											span  】
+										.row.crowded-row
+											.value(ng-class="{true: 'col-md-5 crowded-col', false: 'col-md-12'}[member.event]")
+												input.form-control.wide.input-sm(ng-model="member.value" type="number" min="0" ng-change="calculate()")
+											.value(ng-class="{true: 'col-md-2  crowded-col', false: 'hidden'}[member.event]")
+												span.glyphicon.glyphicon-arrow-right.vertical-middle
+											.value(ng-class="{true: 'col-md-5  crowded-col', false: 'hidden'}[member.event]")
+												input.form-control.wide.input-sm(placeholder="{{member.value * (2 + member.dupe * 0.5)| floor}}" disabled)

@@ -47,7 +47,6 @@ caption{
 	overflow-x:auto;
 	overflow-y:scroll;
 	display:block;
-	height: 55vh;
 	margin-right: -3px;
 }
 .tab-content>.active{
@@ -126,7 +125,7 @@ input, button{
 	outline:none !important;
 }
 .tablescroller-body::-webkit-scrollbar {
-	width: 3px;
+	width: 10px;
 }
 .tablescroller-body::-webkit-scrollbar-track {
 	-webkit-border-radius: 0px;
@@ -135,17 +134,17 @@ input, button{
 	background: none;
 }
 .tablescroller-body::-webkit-scrollbar-thumb {
-	-webkit-border-radius: 3px;
-	border-radius: 3px;
-	background: #AAAAAA;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+	background: #888888;
 }
 .tablescroller-body::-webkit-scrollbar:vertical:hover, .tablescroller-body::-webkit-scrollbar:vertical:active{
-	width: 5px;
+	width: 10px;
 }
 .tablescroller-body::-webkit-scrollbar-thumb:vertical:hover, .tablescroller-body::-webkit-scrollbar-thumb:vertical:active{
-	-webkit-border-radius: 5px;
-	border-radius: 5px;
-	background: #888888;
+	-webkit-border-radius: 12px;
+	border-radius: 12px;
+	background: #666666;
 }
 .custom-file-input{
 	display:none !important;
