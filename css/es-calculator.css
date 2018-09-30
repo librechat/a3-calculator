@@ -3,8 +3,13 @@
 	height: 100vh;
 	background-color: #FFFFFF; 
 }
+.tail{
+	width:100vw;
+	height: 10vh;
+	background-color:#FFFFFF;
+}
 body{
-	overflow: hidden;
+	overflow-x: hidden;
 }
 .table > tbody > tr > td {
 	vertical-align: middle;
@@ -144,6 +149,11 @@ input, button{
 	-webkit-border-radius: 12px;
 	border-radius: 12px;
 	background: #666666;
+}
+.tablescroller-body::-webkit-scrollbar-button{
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+	background: #888888;
 }
 .custom-file-input{
 	display:none !important;

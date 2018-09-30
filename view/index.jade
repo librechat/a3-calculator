@@ -44,7 +44,7 @@ html
 				.tab-content(ng-class="{'gray': 'gray-bg', 'red': 'red-bg', 'blue': 'blue-bg', 'yellow': 'yellow-bg'}[color]")
 					.tab-pane.active#card(role="tabpanel")
 						.alert.alert-danger.right-align.small-alert#arrangealert(role="alert") {{warning_msg}}
-						.tablescroller-body
+						.tablescroller-head
 							table.table.table-bordered.text-center.white-bg
 								tbody
 									tr
@@ -115,7 +115,7 @@ html
 													| 旬卡
 										td.col-md-1
 						.tablescroller-line
-						.tablescroller-body(style="height:55vh;")
+						.tablescroller-head
 							table.table.table-bordered.text-center.white-bg
 								tbody
 									tr(ng-repeat="card in cards track by $index")
@@ -219,3 +219,4 @@ html
 												span.glyphicon.glyphicon-arrow-right.vertical-middle
 											.value(ng-class="{true: 'col-md-5  crowded-col', false: 'hidden'}[member.event]")
 												input.form-control.wide.input-sm(placeholder="{{member.value * (2 + member.dupe * 0.5)| floor}}" disabled)
+		.tail

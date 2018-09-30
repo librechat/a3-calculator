@@ -49,7 +49,7 @@
         <div ng-class="{'gray': 'gray-bg', 'red': 'red-bg', 'blue': 'blue-bg', 'yellow': 'yellow-bg'}[color]" class="tab-content">
           <div id="card" role="tabpanel" class="tab-pane active">
             <div id="arrangealert" role="alert" class="alert alert-danger right-align small-alert">{{warning_msg}}</div>
-            <div class="tablescroller-body">
+            <div class="tablescroller-head">
               <table class="table table-bordered text-center white-bg">
                 <tbody>
                   <tr>
@@ -141,7 +141,7 @@
               </table>
             </div>
             <div class="tablescroller-line"></div>
-            <div style="height:55vh;" class="tablescroller-body">
+            <div class="tablescroller-head">
               <table class="table table-bordered text-center white-bg">
                 <tbody>
                   <tr ng-repeat="card in cards track by $index">
@@ -274,5 +274,6 @@
         </div>
       </div>
     </div>
+    <div class="tail"></div>
   </body>
 </html>
