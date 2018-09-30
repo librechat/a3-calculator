@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>A3 組隊計算機</title>
+    <link href="../include/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/es-calculator.css" rel="stylesheet">
+    <script src="../include/js/jquery-3.2.1.min.js"></script>
+    <script src="../include/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script src="../controller/bundle.js"></script>
+  </head>
+  <body ng-app="A3Calculator">
+    <div class="loading"></div>
+    <div class="container">
+      <div class="page-header text-center">
+        <h1>A3 台版組隊計算機</h1>
+        <h5>*非穩定版本，可能有bug，結果僅供參考*</h5>
+        <h5>*建議使用電腦瀏覽器*</h5>
+        <div role="group" aria-label="menu" class="btn-group">
+          <button type="button" data-toggle="modal" data-target="#help" class="btn btn-default">說明書</button><a type="button" target="_blank" href="https://docs.google.com/spreadsheets/d/1v6cGRqbCGUNcawIkyI7oO2lUP4YpmZZnqrl8Iw9jons/edit?usp=sharing" class="btn btn-default">問題回報</a>
+        </div>
+        <div id="help" tabindex="-1" role="dialog" aria-labeledby="helpModal" aria-hidden="true" class="modal fade">
+          <div role="document" class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" data-dismiss="modal" aria-label="Close" class="close">&times;</button>
+                <h4 class="modal-title">使用說明</h4>
+              </div>
+              <div class="modal-body">
+                <ol>
+                  <li class="content-li">"我的卡片"可以填入自己的卡片和客演角色(可不填)</li>
+                  <li class="content-li">組隊區(紅組、黃組、藍組)可以自由設定隊員</li>
+                  <li class="content-li">按自動組隊之後組好的三色隊伍會顯示在組隊區</li>
+                  <li class="content-li">填好的卡片可以按匯出存成txt檔，下次按匯入就可以讀取之前的卡片記錄</li>
+                  <li class="content-li">星級和卡片名稱不是必填，只是用來防止忘記是哪張卡</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div ng-controller="CardGroup">
+        <ul role="tablist" class="nav nav-tabs">
+          <li role="presentation" class="active"><a href="#card" role="tab" data-toggle="tab" ng-click="changecolor('gray')">我的卡片</a></li>
+          <li role="presentation"><a href="#team" role="tab" data-toggle="tab" ng-click="changecolor('yellow')" class="yellow">黃組</a></li>
+          <li role="presentation"><a href="#team" role="tab" data-toggle="tab" ng-click="changecolor('red')" class="red">紅組</a></li>
+          <li role="presentation"><a href="#team" role="tab" data-toggle="tab" ng-click="changecolor('blue')" class="blue">藍組</a></li>
+        </ul>
+        <div ng-class="{'gray': 'gray-bg', 'red': 'red-bg', 'blue': 'blue-bg', 'yellow': 'yellow-bg'}[color]" class="tab-content">
+          <div id="card" role="tabpanel" class="tab-pane active">
+            <div id="arrangealert" role="alert" class="alert alert-danger right-align small-alert">{{warning_msg}}</div>
+            <div class="tablescroller-head">
+              <table class="table table-bordered text-center white-bg">
+                <tbody>
+                  <tr>
+                    <td class="col-md-3"><span>共有</span>
+                      <input id="cardcount" ng-model="cardcount" type="number" min="1" max="500" ng-blur="changecardcount()" style="width:80px;" class="form-control input-sm"><span>張卡</span>
+                    </td>
+                    <td class="col-md-4"></td>
+                    <td class="col-md-5">
+                      <div role="group" aria-label="cards-operation" class="btn-group-sm right-align"><span>同組加成</span>
+                        <select style="padding:1px; width:160px;" ng-model="eventbuff" option-value class="form-control input-sm">
+                          <option value="0">無</option>
+                          <option value="1">春組</option>
+                          <option value="2">夏組</option>
+                          <option value="3">秋組</option>
+                          <option value="4">冬組</option>
+                        </select>
+                        <input name="cardfile" type="file" id="uploadfile" placeholder="匯入" custom-file-change="upload" class="custom-file-input">
+                        <label for="uploadfile" class="btn btn-secondary custom-file-label">匯入</label>
+                        <button type="button" ng-click="download()" class="btn btn-secondary">匯出</button>
+                        <button type="button" ng-click="clear()" class="btn btn-secondary">清除</button>
+                        <button type="button" ng-click="autoarrangeall()" class="btn btn-secondary">自動組隊</button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="table table-bordered text-center white-bg">
+                <tbody>
+                  <tr>
+                    <td class="col-md-1">編號</td>
+                    <td class="col-md-2">角色</td>
+                    <td class="col-md-2">卡片名稱</td>
+                    <td class="col-md-1">星級</td>
+                    <td class="col-md-1">開花</td>
+                    <td class="col-md-3">數值</td>
+                    <td class="col-md-1">旬卡</td>
+                    <td class="col-md-1">編輯</td>
+                  </tr>
+                  <tr>
+                    <td class="col-md-1">客演角色</td>
+                    <td class="col-md-2">
+                      <select ng-model="guest.character" type="text" class="form-control input-sm">
+                        <option value="" disabled selected>選擇角色</option>
+                        <option value="">無</option>
+                        <option ng-repeat="character in characters">{{character}}</option>
+                      </select>
+                    </td>
+                    <td class="col-md-2"><span>【</span>
+                      <input ng-model="guest.cardname" type="text" placeholder="卡片名稱" class="form-control input-sm"><span> 】</span>
+                    </td>
+                    <td class="col-md-1">
+                      <select style="padding:1px;" ng-model="guest.star" option-value class="form-control input-sm">
+                        <option value="1">N</option>
+                        <option value="2">R</option>
+                        <option value="3">SR</option>
+                        <option value="4">SSR</option>
+                      </select>
+                    </td>
+                    <td class="col-md-1">
+                      <select style="padding:1px;" ng-model="guest.dupe" option-value class="form-control input-sm">
+                        <option value="0">零花</option>
+                        <option value="1">一花</option>
+                        <option value="2">滿開</option>
+                      </select>
+                    </td>
+                    <td class="col-md-3">
+                      <div class="row crowded-row">
+                        <div class="col-md-4 crowded-col">
+                          <input ng-model="guest.yellow" type="number" min="0" class="form-control wide input-sm yellow-bg">
+                        </div>
+                        <div class="col-md-4 crowded-col">
+                          <input ng-model="guest.red" type="number" min="0" class="form-control wide input-sm red-bg">
+                        </div>
+                        <div class="col-md-4 crowded-col">
+                          <input ng-model="guest.blue" type="number" min="0" class="form-control wide input-sm blue-bg">
+                        </div>
+                      </div>
+                    </td>
+                    <td class="col-md-1">
+                      <div style="padding: 0px; margin: 0px; height:20px;" class="checkbox input-sm">
+                        <label>
+                          <input type="checkbox" ng-model="guest.event">旬卡
+                        </label>
+                      </div>
+                    </td>
+                    <td class="col-md-1"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="tablescroller-line"></div>
+            <div class="tablescroller-body">
+              <table class="table table-bordered text-center white-bg">
+                <tbody>
+                  <tr ng-repeat="card in cards track by $index">
+                    <td class="col-md-1">{{$index+1}}</td>
+                    <td class="col-md-2">
+                      <select ng-model="card.character" type="text" class="form-control input-sm">
+                        <option value="" disabled selected>選擇角色</option>
+                        <option ng-repeat="character in characters">{{character}}</option>
+                      </select>
+                    </td>
+                    <td class="col-md-2"><span>【</span>
+                      <input ng-model="card.cardname" type="text" placeholder="卡片名稱" class="form-control input-sm"><span> 】</span>
+                    </td>
+                    <td class="col-md-1">
+                      <select style="padding:1px;" ng-model="card.star" option-value class="form-control input-sm">
+                        <option value="1">N</option>
+                        <option value="2">R</option>
+                        <option value="3">SR</option>
+                        <option value="4">SSR</option>
+                      </select>
+                    </td>
+                    <td class="col-md-1">
+                      <select style="padding:1px;" ng-model="card.dupe" option-value class="form-control input-sm">
+                        <option value="0">零花</option>
+                        <option value="1">一花</option>
+                        <option value="2">滿開</option>
+                      </select>
+                    </td>
+                    <td class="col-md-3">
+                      <div class="row crowded-row">
+                        <div class="col-md-4 crowded-col">
+                          <input ng-model="card.yellow" type="number" min="0" class="form-control wide input-sm yellow-bg">
+                        </div>
+                        <div class="col-md-4 crowded-col">
+                          <input ng-model="card.red" type="number" min="0" class="form-control wide input-sm red-bg">
+                        </div>
+                        <div class="col-md-4 crowded-col">
+                          <input ng-model="card.blue" type="number" min="0" class="form-control wide input-sm blue-bg">
+                        </div>
+                      </div>
+                    </td>
+                    <td class="col-md-1">
+                      <div style="padding: 0px; margin: 0px; height:20px;" class="checkbox input-sm">
+                        <label>
+                          <input type="checkbox" ng-model="card.event">旬卡
+                        </label>
+                      </div>
+                    </td>
+                    <td class="col-md-1 crowded-col">
+                      <div class="btn-group">
+                        <button type="button" ng-click="addcard($index, true)" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-plus"></span></button>
+                        <button type="button" ng-click="addcard($index, false)" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-paste"></span></button>
+                        <button type="button" ng-click="removecard($index)" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-minus"></span></button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div id="team" role="tabpanel" class="tab-pane">
+            <div class="tablescroller-head">
+              <table ng-class="{'red': 'red-line', 'blue': 'blue-line', 'yellow': 'yellow-line', 'gray': 'gray-line'}[color]" class="table table-bordered text-center white-bg">
+                <tbody>
+                  <tr>
+                    <td class="col-md-1"><span>合計值</span></td>
+                    <td class="col-md-1"><span ng-bind="teams[color].total"></span></td>
+                    <td class="col-md-1"><span>加成倍率</span></td>
+                    <td class="col-md-1"><span ng-bind="teams[color].skillbuff"></span></td>
+                    <td class="col-md-6"><span ng-bind="teams[color].skillname"></span></td>
+                    <td class="col-md-2"><span>客演角色</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="tablescroller-line"></div>
+            <div class="tablescroller-body">
+              <table ng-class="{'red': 'red-line', 'blue': 'blue-line', 'yellow': 'yellow-line', 'gray': 'gray-line'}[color]" class="table table-bordered text-center white-bg">
+                <tbody>
+                  <tr>
+                    <td ng-repeat="member in teams[color].members" class="col-md-2">
+                      <div class="row">
+                        <div style="padding: 1px;  line-height:30px;" class="buff-card col-md-4">
+                          <div style="padding: 0px; margin: 0px; height:20px;" class="checkbox input-sm">
+                            <label>
+                              <input type="checkbox" ng-model="member.event" ng-change="calculate()">旬卡
+                            </label>
+                          </div>
+                        </div>
+                        <div style="padding:1px;" class="star col-md-4">
+                          <select style="padding:1px;" ng-model="member.star" option-value class="form-control input-sm">
+                            <option value="1">N</option>
+                            <option value="2">R</option>
+                            <option value="3">SR</option>
+                            <option value="4">SSR</option>
+                          </select>
+                        </div>
+                        <div style="padding:1px;" class="card-count col-md-4">
+                          <select style="padding:1px;" ng-model="member.dupe" ng-change="calculate()" option-value class="form-control input-sm">
+                            <option value="0">零花</option>
+                            <option value="1">一花</option>
+                            <option value="2">滿開</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="character">
+                        <select ng-model="member.character" type="text" ng-change="calculate()" class="form-control input-sm">
+                          <option value="" disabled selected>選擇角色</option>
+                          <option value="">無</option>
+                          <option ng-repeat="character in characters">{{character}}</option>
+                        </select>
+                      </div>
+                      <div class="card-name"><span>【</span>
+                        <input ng-model="member.cardname" type="text" placeholder="卡片名稱" class="form-control input-sm"><span> 】</span>
+                      </div>
+                      <div class="row crowded-row">
+                        <div ng-class="{true: 'col-md-5 crowded-col', false: 'col-md-12'}[member.event]" class="value">
+                          <input ng-model="member.value" type="number" min="0" ng-change="calculate()" class="form-control wide input-sm">
+                        </div>
+                        <div ng-class="{true: 'col-md-2  crowded-col', false: 'hidden'}[member.event]" class="value"><span class="glyphicon glyphicon-arrow-right vertical-middle"></span></div>
+                        <div ng-class="{true: 'col-md-5  crowded-col', false: 'hidden'}[member.event]" class="value">
+                          <input placeholder="{{member.value * (2 + member.dupe * 0.5)| floor}}" disabled class="form-control wide input-sm">
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
