@@ -3,7 +3,7 @@ html
 	head
 		title A3 組隊計算機
 		link(href="../include/css/bootstrap.min.css" rel="stylesheet")
-		link(href="../css/es-calculator.css" rel="stylesheet")
+		link(href="../css/a3-calculator.css" rel="stylesheet")
 		script(src="../include/js/jquery-3.2.1.min.js")
 		script(src="../include/js/bootstrap.min.js")
 		script(src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js")
@@ -219,4 +219,6 @@ html
 												span.glyphicon.glyphicon-arrow-right.vertical-middle
 											.value(ng-class="{true: 'col-md-5  crowded-col', false: 'hidden'}[member.event]")
 												input.form-control.wide.input-sm(placeholder="{{member.value * (2 + member.dupe * 0.5)| floor}}" disabled)
+				.tail
+				img.skillimg(ng-src="{{imagepath[color]}}" ng-class="{'gray': 'gray-img', 'red': 'color-img', 'blue': 'color-img', 'yellow': 'color-img'}[color]")
 		.tail

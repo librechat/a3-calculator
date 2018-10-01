@@ -27,6 +27,13 @@ app.controller("CardGroup", ["$scope", function($scope){
 	$scope.groupstyle = 3;
 	$scope.warning_msg = "";
 
+	$scope.imagepath = {
+		'red': '../resource/action.png',
+		'blue': '../resource/serious.png',
+		'yellow': '../resource/comedy.png',
+		'gray': ''
+	};
+
 	$scope.init = function(){
 		reader.onload = (function(file){
 			return function(event){
