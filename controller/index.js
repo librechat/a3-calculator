@@ -28,9 +28,9 @@ app.controller("CardGroup", ["$scope", function($scope){
 	$scope.warning_msg = "";
 
 	$scope.imagepath = {
-		'red': '../resource/action.png',
-		'blue': '../resource/serious.png',
-		'yellow': '../resource/comedy.png',
+		'red': '../resource/action-web.png',
+		'blue': '../resource/serious-web.png',
+		'yellow': '../resource/comedy-web.png',
 		'gray': ''
 	};
 
