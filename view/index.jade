@@ -218,7 +218,7 @@ html
 											.value(ng-class="{true: 'col-md-2  crowded-col', false: 'hidden'}[member.event]")
 												span.glyphicon.glyphicon-arrow-right.vertical-middle
 											.value(ng-class="{true: 'col-md-5  crowded-col', false: 'hidden'}[member.event]")
-												input.form-control.wide.input-sm(placeholder="{{member.value * (2 + member.dupe * 0.5)| floor}}" disabled)
+												input.form-control.wide.input-sm(placeholder="{{member.value * (2 + member.dupe)| floor}}" disabled)
 				.tail
 				img.skillimg(ng-src="{{imagepath[color]}}" ng-class="{'gray': 'gray-img', 'red': 'color-img', 'blue': 'color-img', 'yellow': 'color-img'}[color]")
 		.tail

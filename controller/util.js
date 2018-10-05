@@ -21,8 +21,8 @@ const member_template = {
 const team_template = {
     total: 0,
     skillname: '無技能',
-    skillbuff: 1,
-    groupbuff: 1,
+    skillbuff: 1.0,
+    groupbuff: 1.0,
     members:[]
 };
 const colors = ['red', 'blue', 'yellow'];
@@ -55,7 +55,7 @@ CopyByValue = function(object){
 	return JSON.parse(JSON.stringify(object));
 }
 Arrangeable = function(cards, characters){
-    if(cards.length < 15) return warning.count;
+    if(cards.length < 5) return warning.count;
     var different_count = 0;
     var character_dic = {};
     for(var i=0; i<characters.length; i++){
@@ -70,8 +70,8 @@ Arrangeable = function(cards, characters){
             character_dic[char]++;
         }
     }
-    if(different_count < 15) return warning.character_count;
-    else return null;
+    //if(different_count < 5) return warning.character_count;
+    return null;
 }
 IsLegal = function(cards, characters){
     if(cards == undefined || cards == null) return warning.illegal_cardfile;

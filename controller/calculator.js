@@ -5,7 +5,7 @@ util.ExtendArray();
 sort_cards = function(cards, color, left, right){
 	if(left >= right) return;
 	var pivot = cards[left][color];
-	if(cards[left].event == true) pivot = cards[left][color] * (cards[left].dupe * 0.5 + 2);
+	if(cards[left].event == true) pivot = cards[left][color] * (cards[left].dupe * 1 + 2);
 	var i=left;
 	var j=right+1;
 	while(true){
@@ -30,12 +30,12 @@ card_to_team = function(card, color){
 	return {id: card.id, star: card.star, character: card.character, cardname: card.cardname, value: card[color], event: card.event, dupe: card.dupe};
 }
 card_greater = function(card, color, pivot){
-	if(card.event === true) value = card[color] * (card.dupe * 0.5 + 2);
+	if(card.event === true) value = card[color] * (card.dupe * 1 + 2);
 	else value = card[color];
 	return value > pivot;
 }
 card_less = function(card, color, pivot){
-	if(card.event === true) value = card[color] * (card.dupe * 0.5 + 2);
+	if(card.event === true) value = card[color] * (card.dupe * 1 + 2);
 	else value = card[color];
 	return value < pivot;
 }
@@ -45,7 +45,7 @@ calculate_total = function(team, skill, eventgroup){
 	var buff_name = '';
 	for(var j=0; j<team.members.length; j++){
 		var value = team.members[j].value;
-		if(team.members[j].event === true) value *= (team.members[j].dupe * 0.5 + 2);
+		if(team.members[j].event === true) value *= (team.members[j].dupe * 1 + 2);
 		if(data.characters.indexOf(team.members[j].character) !== -1) sum += value;
 	}
 	
