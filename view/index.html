@@ -88,8 +88,8 @@
                     <td class="col-md-1">旬卡</td>
                     <td class="col-md-1">編輯</td>
                   </tr>
-                  <tr>
-                    <td class="col-md-1">客演角色</td>
+                  <tr ng-repeat="guest in guests track by $index">
+                    <td ng-class="{0: 'yellow-bg', 1: 'red-bg', 2: 'blue-bg'}[$index]" class="col-md-1">客演角色</td>
                     <td class="col-md-2">
                       <select ng-model="guest.character" type="text" class="form-control input-sm">
                         <option value="" disabled selected>選擇角色</option>
@@ -118,13 +118,13 @@
                     <td class="col-md-3">
                       <div class="row crowded-row">
                         <div class="col-md-4 crowded-col">
-                          <input ng-model="guest.yellow" type="number" min="0" class="form-control wide input-sm yellow-bg">
+                          <input ng-model="guest.value" type="number" min="0" ng-class="{1:'hide',2:'hide'}[$index]" class="form-control wide input-sm yellow-bg">
                         </div>
                         <div class="col-md-4 crowded-col">
-                          <input ng-model="guest.red" type="number" min="0" class="form-control wide input-sm red-bg">
+                          <input ng-model="guest.value" type="number" min="0" ng-class="{0:'hide',2:'hide'}[$index]" class="form-control wide input-sm red-bg">
                         </div>
                         <div class="col-md-4 crowded-col">
-                          <input ng-model="guest.blue" type="number" min="0" class="form-control wide input-sm blue-bg">
+                          <input ng-model="guest.value" type="number" min="0" ng-class="{0:'hide',1:'hide'}[$index]" class="form-control wide input-sm blue-bg">
                         </div>
                       </div>
                     </td>

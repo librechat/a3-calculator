@@ -123,11 +123,10 @@ arrange = function(color, cards, skill, origin_skill, usedcards_index, guest, ev
 			&& value.members.indexOf(guest.character) !== -1){
 			add_guest = true;
 		}
-		if(skillteam.members.length === value.members.length || add_guest){
+		if((skillteam.members.length === value.members.length && skillteam.members.length < 6)|| add_guest){
 			skillteam.skillname = value.name;
 			skillteam.skillbuff = value.buff;
 			ableteam.push(skillteam);
-			console.log(ableteam[ableteam.length-1]);
 		}
 		else; //impossible team skills
 	});

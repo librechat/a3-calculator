@@ -18,7 +18,7 @@ app.controller("CardGroup", ["$scope", function($scope){
 
 	$scope.teams = {'red': $scope.redteam, 'blue': $scope.blueteam, 'yellow': $scope.yellowteam};
 	
-	$scope.guest = null;
+	$scope.guests = {'yellow': null, 'red': null, 'blue':null};
 
 	$scope.skill = {};
 	$scope.eventgroup = -1;
@@ -71,16 +71,17 @@ app.controller("CardGroup", ["$scope", function($scope){
 		var card = util.CopyByValue(util.Const.card_template);
 		card.id = 0;
 		$scope.cards.push(card);
-
-		$scope.guest = util.CopyByValue(util.Const.card_template);
+ 
 		for(var i=0; i<3; i++){
 			var color = util.Const.colors[i];
+			$scope.guests[color] = util.CopyByValue(util.Const.member_template);
+			
 			var team = util.CopyByValue(util.Const.team_template);
 			for(var k=0; k<5; k++){
 				var member = util.CopyByValue(util.Const.member_template);
 				team.members.push(member);
 			}
-			team.members.push(calculator.card_to_team($scope.guest, color));
+			team.members.push(util.CopyByValue($scope.guests[color]));
 			$scope.teams[color] = team;
 		}	
 
@@ -128,14 +129,13 @@ app.controller("CardGroup", ["$scope", function($scope){
 		}
 	}
 	$scope.arrangebycolor = function(cards, color){
-		var guest_member = calculator.card_to_team($scope.guest, color);
-
 		var candidate_skills = util.CopyByValue($scope.skill[color]);
 		var skill = calculator.multiple_skill(color, candidate_skills);
 		calculator.sort_cards(cards, color, 0, cards.length-1);
 		//concept: max('skill') = (sum(skill_members)+sum(others)) * (100+buff)%
 		var usedcards_index = [];
-		$scope.teams[color] = calculator.arrange(color, cards, skill, $scope.skill[color], usedcards_index, guest_member, $scope.eventgroup);
+		var guest = util.CopyByValue($scope.guests[color]);
+		$scope.teams[color] = calculator.arrange(color, cards, skill, $scope.skill[color], usedcards_index, guest, $scope.eventgroup);
 		return;
 	}
 	$scope.clear = function(){
@@ -144,7 +144,7 @@ app.controller("CardGroup", ["$scope", function($scope){
 		$scope.cards[0] = util.CopyByValue(util.Const.card_template);
 		$scope.cards[0].id = new Date().getTime();
 
-		$scope.guest = util.CopyByValue(util.Const.card_template);
+		for(var i=0; i<3; i++) $scope.guests[i] = util.CopyByValue(util.Const.card_template);
 		
 		var file_input = angular.element(document.getElementsByName('cardfile')[0]);
 		file_input.val(null);

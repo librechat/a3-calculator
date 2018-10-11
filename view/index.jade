@@ -78,8 +78,8 @@ html
 										td.col-md-3 數值
 										td.col-md-1 旬卡
 										td.col-md-1 編輯
-									tr
-										td.col-md-1 客演角色
+									tr(ng-repeat="guest in guests track by $index")
+										td.col-md-1(ng-class="{0: 'yellow-bg', 1: 'red-bg', 2: 'blue-bg'}[$index]") 客演角色
 										td.col-md-2
 											select.form-control.input-sm(ng-model="guest.character" type="text")
 												option(value="" disabled selected) 選擇角色
@@ -103,11 +103,11 @@ html
 										td.col-md-3
 											.row.crowded-row
 												.col-md-4.crowded-col
-													input.form-control.wide.input-sm.yellow-bg(ng-model="guest.yellow" type="number" min="0")
+													input.form-control.wide.input-sm.yellow-bg(ng-model="guest.value" type="number" min="0" ng-class="{1:'hide',2:'hide'}[$index]")
 												.col-md-4.crowded-col
-													input.form-control.wide.input-sm.red-bg(ng-model="guest.red" type="number" min="0")
+													input.form-control.wide.input-sm.red-bg(ng-model="guest.value" type="number" min="0" ng-class="{0:'hide',2:'hide'}[$index]")
 												.col-md-4.crowded-col
-													input.form-control.wide.input-sm.blue-bg(ng-model="guest.blue" type="number" min="0")
+													input.form-control.wide.input-sm.blue-bg(ng-model="guest.value" type="number" min="0" ng-class="{0:'hide',1:'hide'}[$index]")
 										td.col-md-1
 											.checkbox.input-sm(style="padding: 0px; margin: 0px; height:20px;")
 												label

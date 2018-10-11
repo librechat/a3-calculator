@@ -8,6 +8,9 @@
 	height: 5vh;
 	background-color:#FFFFFF;
 }
+.hide{
+	display: none !important; 
+}
 body{
 	overflow-x: hidden;
 }
