@@ -86,32 +86,39 @@ calculate_total = function(team, skill, eventgroup){
 arrange = function(color, cards, skill, origin_skill, usedcards_index, guest, eventgroup){
 	//prepare skills
 	var ableteam = [];
+
 	skill = skill.filter(function(skl){
 		if (skl.members.length == 6 &&
 			(skl.members.indexOf(guest.character) === -1 && data.characters.indexOf(guest.character))) return false;
 		else return true;
 	});
-
 	skill.forEach(function(value){
 		//value.members, value.buff
 		var skillteam = util.CopyByValue(util.Const.team_template);
-		var member_count = 0;
-		value.members.every(function(member){
-			if(member_count >= 5) return false;
+		var add_guest = false;
+
+		value.members.forEach(function(member){
+
 			var first_id = cards.findIndex(function(card){
 				return card.character === member && usedcards_index.indexOf(card.id) === -1;
 			});
-			if(first_id === -1 || usedcards_index.indexOf(cards[first_id].id) !== -1) return false;
+			if(first_id === -1 || usedcards_index.indexOf(cards[first_id].id) !== -1) return;
 			
 			var mem = card_to_team(cards[first_id], color);
-			if(mem.value < guest.value && guest.character === mem.character) return false;
-
+			if(guest.character === mem.character) {
+				// choose guest instead of our member
+				// or the slot must remain for guest
+				if(mem.value < guest.value ||  value.members.length === 6 ){
+					add_guest = true;
+					return;
+				}
+				else;
+			}
 			skillteam.members.push(mem);
-			member_count++;
-			return true;
+			return;
 		});
-		var add_guest = false;
-		if(value.members.length - skillteam.members.length > 0
+		
+		if(value.members.length > skillteam.members.length
 			&& skillteam.members.indexOf(guest.character) === -1
 			&& value.members.indexOf(guest.character) !== -1){
 			add_guest = true;
@@ -120,6 +127,7 @@ arrange = function(color, cards, skill, origin_skill, usedcards_index, guest, ev
 			skillteam.skillname = value.name;
 			skillteam.skillbuff = value.buff;
 			ableteam.push(skillteam);
+			console.log(ableteam[ableteam.length-1]);
 		}
 		else; //impossible team skills
 	});
@@ -171,6 +179,7 @@ arrange = function(color, cards, skill, origin_skill, usedcards_index, guest, ev
 			max_team = team;
 		}
 	});
+
 	if(max_team !== null){
 		for(var k=0; k<max_team.members.length; k++){
 			usedcards_index.push(max_team.members[k].id);
