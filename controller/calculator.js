@@ -50,21 +50,24 @@ calculate_total = function(team, skill, eventgroup){
 	}
 	
 	//find available skills
-	skill.forEach(function(value){
+	var skill_count = 0;
+	for(var i=0; i<skill.length; i++){
 		var count = 0;
 		var used_members = [];
 		for(var j=0; j < team.members.length; j++){
 			if(used_members.indexOf(team.members[j].character) === -1
-				&& value.members.indexOf(team.members[j].character) !== -1){
+				&& skill[i].members.indexOf(team.members[j].character) !== -1){
 				count++;
 				used_members.push(team.members[j].character);
 			}
 		}
-		if(count == value.members.length){
-			buffs *= value.buff;
-			buff_name = (buff_name.length === 0)? value.name: buff_name + '+' + value.name;
+		if(count == skill[i].members.length && skill_count < 3){
+			buffs *= skill[i].buff;
+			buff_name = (buff_name.length === 0)? skill[i].name: buff_name + '+' + skill[i].name;
+			skill_count++;
+			if(skill_count == 3) break;
 		}
-	});
+	};
 
 	//same team buff: $scope.eventgroup
 	var groupbuff = 0;
@@ -78,7 +81,7 @@ calculate_total = function(team, skill, eventgroup){
 	
 
 	team.total = Math.floor(sum * buffs * groupbuff);
-	team.skillbuff = buffs.toFixed(2);
+	team.skillbuff = buffs.toFixed(3);
 	team.groupbuff = groupbuff.toFixed(3);
 	team.skillname = (buff_name.length === 0)? '無技能': buff_name;
 	return team.total;
@@ -86,7 +89,6 @@ calculate_total = function(team, skill, eventgroup){
 arrange = function(color, cards, skill, origin_skill, usedcards_index, guest, eventgroup){
 	//prepare skills
 	var ableteam = [];
-
 	skill = skill.filter(function(skl){
 		if (skl.members.length == 6 &&
 			(skl.members.indexOf(guest.character) === -1 && data.characters.indexOf(guest.character))) return false;
@@ -188,16 +190,17 @@ arrange = function(color, cards, skill, origin_skill, usedcards_index, guest, ev
 	return max_team;
 }
 multiple_skill = function(color, candidate_skills){
-
 	var team_limit = 6;
 
 	//prepare multiple skill
 	var candidate_left = 0;
 	var origin_candidate_length = candidate_skills.length;
+
 	do {
 		var candidates = candidate_skills.length;
-		for(var j=candidates-1; j>=candidate_left; j--){
-			for(var k=(j < origin_candidate_length)? j-1: origin_candidate_length-1; k>=0; k--){
+		for(var j = candidates-1; j >= candidate_left; j--){
+			var addend_length = (j < origin_candidate_length)? j-1: origin_candidate_length-1;			
+			for(var k = addend_length; k >= 0; k--){
 				var skl = candidate_skills[j];
 				var another_skl = candidate_skills[k];
 				var difference = skl.members.concat(another_skl.members).dupe();
@@ -217,21 +220,22 @@ multiple_skill = function(color, candidate_skills){
 					if(same === undefined){
 						var head = 0;
 						for(var k=0; k<difference.length; k++){
-							if(skl.members.indexOf(difference[k]) > -1 && another_skl.members.indexOf(difference[k]) > -1){
+							if(skl.members.indexOf(difference[k]) > -1
+								&& another_skl.members.indexOf(difference[k]) > -1){
 								var tmp = difference[k];
 								difference[k] = difference[head];
 								difference[head] = tmp;
 								head++;
 							}
 						}							
-						if(difference.length === skl.members.length){
+						if(difference.length === skl.members.length && j >= origin_candidate_length){
 							candidate_skills.splice(j, 1);
-							if(j < origin_candidate_length) origin_candidate_length--;
+							//if(j < origin_candidate_length) origin_candidate_length--;
 							if(j < candidates) candidates--;
 						}
-						if(difference.length === another_skl.members.length){
+						if(difference.length === another_skl.members.length && k >= origin_candidate_length){
 							candidate_skills.splice(k, 1);
-							if(k < origin_candidate_length) origin_candidate_length--;
+							//if(k < origin_candidate_length) origin_candidate_length--;
 							if(k < candidates) candidates--;
 						}
 						candidate_skills.push({
@@ -245,6 +249,12 @@ multiple_skill = function(color, candidate_skills){
 		}
 		candidate_left = candidates;
 	} while(candidate_left !== candidate_skills.length);
+
+	for(var i=candidate_skills.length - 1; i>=0; i--){
+		var skl = candidate_skills[i].name.split("+");
+		if(skl.length > 3) candidate_skills.splice(i, 1);;
+	};
+
 	return candidate_skills;
 }
 module.exports = {

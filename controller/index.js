@@ -160,15 +160,18 @@ app.controller("CardGroup", ["$scope", function($scope){
 		var text = JSON.stringify($scope.cards);
 		//create a fake element and click it
 		//a(href="file" download)
+		var blob = new Blob(["\ufeff", text]);
+
 		var element = document.createElement('a');
-		element.setAttribute('href', 'data:text/plain;charset=utf-8,'+encodeURIComponent(text));
+		//element.setAttribute('href', 'data:text/plain;charset=utf-8,'+encodeURIComponent(text));
 		element.setAttribute('download', filename);
+		element.href = window.URL.createObjectURL(blob);
 		element.display = 'none';
 		document.body.appendChild(element);
 		element.click();
 		document.body.removeChild(element);
 	}
-	$scope.upload = function(){
+	$scope.upload = function(event){
 		//open file
 		if(event == undefined || event.target == undefined || event.target.files.length == 0) return;
 		var file = event.target.files[0];
