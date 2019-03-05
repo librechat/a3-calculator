@@ -34,6 +34,8 @@ app.controller("CardGroup", ["$scope", function($scope){
 		'gray': ''
 	};
 
+	$scope.event_card_value = calculator.event_card_value;
+
 	$scope.init = function(){
 		reader.onload = (function(file){
 			return function(event){
@@ -60,6 +62,10 @@ app.controller("CardGroup", ["$scope", function($scope){
 					if(cards[i].id == null) {
 						cards[i].id = timestamp + cnt;
 						cnt++;
+					}
+					if(typeof(cards[i].event) === 'boolean'){
+						if(cards[i].event === true) cards[i].event = 1;
+						else cards[i].event = 0;
 					}
 				}
 				$scope.cards = cards;

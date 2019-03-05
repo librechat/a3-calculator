@@ -110,10 +110,10 @@ html
 												.col-md-4.crowded-col
 													input.form-control.wide.input-sm.blue-bg(ng-model="guest.value" type="number" min="0" ng-class="{0:'hide',1:'hide'}[$index]")
 										td.col-md-1
-											.checkbox.input-sm(style="padding: 0px; margin: 0px; height:20px;")
-												label
-													input(type="checkbox" ng-model="guest.event")
-													| 旬卡
+											select.form-control.input-sm(style="padding:1px;" ng-model="guest.event" option-value)
+												option(value=0) 無
+												option(value=1) 旬
+												option(value=2) 小旬
 										td.col-md-1
 						.tablescroller-line
 						.tablescroller-head
@@ -149,10 +149,10 @@ html
 												.col-md-4.crowded-col
 													input.form-control.wide.input-sm.blue-bg(ng-model="card.blue" type="number" min="0")
 										td.col-md-1
-											.checkbox.input-sm(style="padding: 0px; margin: 0px; height:20px;")
-												label
-													input(type="checkbox" ng-model="card.event")
-													| 旬卡
+											select.form-control.input-sm(style="padding:1px;" ng-model="card.event" option-value)
+												option(value=0) 無
+												option(value=1) 旬
+												option(value=2) 小旬
 										td.col-md-1.crowded-col
 											.btn-group
 												button(type="button" ng-click="addcard($index, true)").btn.btn-default.btn-xs
@@ -189,10 +189,10 @@ html
 									td.col-md-2(ng-repeat="member in teams[color].members")
 										.row
 											.buff-card.col-md-4(style="padding: 1px;  line-height:30px;")
-												.checkbox.input-sm(style="padding: 0px; margin: 0px; height:20px;")
-													label
-														input(type="checkbox" ng-model="member.event" ng-change="calculate()")
-														| 旬卡
+												select.form-control.input-sm(style="padding:1px;" ng-model="member.event" ng-change="calculate()" option-value)
+													option(value=0) 無
+													option(value=1) 旬
+													option(value=2) 小旬
 											.star.col-md-4(style="padding:1px;")
 												select.form-control.input-sm(style="padding:1px;" ng-model="member.star" option-value)
 													option(value=1) N
@@ -214,12 +214,13 @@ html
 											input.form-control.input-sm(ng-model="member.cardname" type="text" placeholder="卡片名稱")
 											span  】
 										.row.crowded-row
-											.value(ng-class="{true: 'col-md-5 crowded-col', false: 'col-md-12'}[member.event]")
+											.value(ng-class="{true: 'col-md-5 crowded-col', false: 'col-md-12'}[member.event != 0]")
 												input.form-control.wide.input-sm(ng-model="member.value" type="number" min="0" ng-change="calculate()")
-											.value(ng-class="{true: 'col-md-2  crowded-col', false: 'hidden'}[member.event]")
+											.value(ng-class="{true: 'col-md-2  crowded-col', false: 'hidden'}[member.event != 0]")
 												span.glyphicon.glyphicon-arrow-right.vertical-middle
-											.value(ng-class="{true: 'col-md-5  crowded-col', false: 'hidden'}[member.event]")
-												input.form-control.wide.input-sm(placeholder="{{member.value * (2 + member.dupe)| floor}}" disabled)
+											.value(ng-class="{true: 'col-md-5  crowded-col', false: 'hidden'}[member.event != 0]")
+												input.form-control.wide.input-sm(placeholder="{{event_card_value(member, null)}}" disabled)
 				.tail
-				img.skillimg(ng-src="{{imagepath[color]}}" ng-class="{'gray': 'gray-img', 'red': 'color-img', 'blue': 'color-img', 'yellow': 'color-img'}[color]")
+				//-img.skillimg(ng-src="{{imagepath[color]}}" ng-class="{'gray': 'gray-img', 'red': 'color-img', 'blue': 'color-img', 'yellow': 'color-img'}[color]")
 		.tail
+			a(href="https://karikan.web.fc2.com/linkskill/fantizi.html" target="_blank") 感謝參考資料：RH大大

@@ -130,11 +130,11 @@
                       </div>
                     </td>
                     <td class="col-md-1">
-                      <div style="padding: 0px; margin: 0px; height:20px;" class="checkbox input-sm">
-                        <label>
-                          <input type="checkbox" ng-model="guest.event">旬卡
-                        </label>
-                      </div>
+                      <select style="padding:1px;" ng-model="guest.event" option-value class="form-control input-sm">
+                        <option value="0">無</option>
+                        <option value="1">旬</option>
+                        <option value="2">小旬</option>
+                      </select>
                     </td>
                     <td class="col-md-1"></td>
                   </tr>
@@ -185,11 +185,11 @@
                       </div>
                     </td>
                     <td class="col-md-1">
-                      <div style="padding: 0px; margin: 0px; height:20px;" class="checkbox input-sm">
-                        <label>
-                          <input type="checkbox" ng-model="card.event">旬卡
-                        </label>
-                      </div>
+                      <select style="padding:1px;" ng-model="card.event" option-value class="form-control input-sm">
+                        <option value="0">無</option>
+                        <option value="1">旬</option>
+                        <option value="2">小旬</option>
+                      </select>
                     </td>
                     <td class="col-md-1 crowded-col">
                       <div class="btn-group">
@@ -226,11 +226,11 @@
                   <td ng-repeat="member in teams[color].members" class="col-md-2">
                     <div class="row">
                       <div style="padding: 1px;  line-height:30px;" class="buff-card col-md-4">
-                        <div style="padding: 0px; margin: 0px; height:20px;" class="checkbox input-sm">
-                          <label>
-                            <input type="checkbox" ng-model="member.event" ng-change="calculate()">旬卡
-                          </label>
-                        </div>
+                        <select style="padding:1px;" ng-model="member.event" ng-change="calculate()" option-value class="form-control input-sm">
+                          <option value="0">無</option>
+                          <option value="1">旬</option>
+                          <option value="2">小旬</option>
+                        </select>
                       </div>
                       <div style="padding:1px;" class="star col-md-4">
                         <select style="padding:1px;" ng-model="member.star" option-value class="form-control input-sm">
@@ -259,12 +259,12 @@
                       <input ng-model="member.cardname" type="text" placeholder="卡片名稱" class="form-control input-sm"><span> 】</span>
                     </div>
                     <div class="row crowded-row">
-                      <div ng-class="{true: 'col-md-5 crowded-col', false: 'col-md-12'}[member.event]" class="value">
+                      <div ng-class="{true: 'col-md-5 crowded-col', false: 'col-md-12'}[member.event != 0]" class="value">
                         <input ng-model="member.value" type="number" min="0" ng-change="calculate()" class="form-control wide input-sm">
                       </div>
-                      <div ng-class="{true: 'col-md-2  crowded-col', false: 'hidden'}[member.event]" class="value"><span class="glyphicon glyphicon-arrow-right vertical-middle"></span></div>
-                      <div ng-class="{true: 'col-md-5  crowded-col', false: 'hidden'}[member.event]" class="value">
-                        <input placeholder="{{member.value * (2 + member.dupe)| floor}}" disabled class="form-control wide input-sm">
+                      <div ng-class="{true: 'col-md-2  crowded-col', false: 'hidden'}[member.event != 0]" class="value"><span class="glyphicon glyphicon-arrow-right vertical-middle"></span></div>
+                      <div ng-class="{true: 'col-md-5  crowded-col', false: 'hidden'}[member.event != 0]" class="value">
+                        <input placeholder="{{event_card_value(member, null)}}" disabled class="form-control wide input-sm">
                       </div>
                     </div>
                   </td>
@@ -273,9 +273,9 @@
             </table>
           </div>
         </div>
-        <div class="tail"></div><img ng-src="{{imagepath[color]}}" ng-class="{'gray': 'gray-img', 'red': 'color-img', 'blue': 'color-img', 'yellow': 'color-img'}[color]" class="skillimg">
+        <div class="tail"></div>
       </div>
     </div>
-    <div class="tail"></div>
+    <div class="tail"><a href="https://karikan.web.fc2.com/linkskill/fantizi.html" target="_blank">感謝參考資料：RH大大</a></div>
   </body>
 </html>
