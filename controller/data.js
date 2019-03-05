@@ -12,8 +12,9 @@ const group = [
 ];
 const redskill = [
 	{
+		// bug from komoe
 		name: '新生秋組',
-		buff: 1.48,
+		buff: 1.6,
 		members: ['攝津萬里', '兵頭十座', '七尾太一', '伏見臣', '古市左京']
 	},
 	{
@@ -22,8 +23,9 @@ const redskill = [
 		members: ['佐久間咲也','皇天馬','攝津萬里','月岡紬']
 	},
 	{
+		// bug from komoe
 		name: '團內足球社',
-		buff: 1.24,
+		buff: 1.36,
 		members: ['皆木綴','伏見臣','高遠丞']
 	},
 	{
@@ -62,8 +64,9 @@ const redskill = [
 		members: ['皇天馬','碓冰真澄']
 	},
 	{
+		// bug from komoe
 		name: '毒舌',
-		buff: 1.12,
+		buff: 1.24,
 		members: ['碓冰真澄','瑠璃川幸']
 	},
 	{
@@ -84,8 +87,9 @@ const redskill = [
 ];
 const blueskill = [
 	{
+		// bug from komoe
 		name: '新生春組',
-		buff: 1.48,
+		buff: 1.6,
 		members: ['佐久間咲也', '碓冰真澄', '皆木綴', '茅崎至', '希特隆']
 	},
 	{
@@ -104,8 +108,9 @@ const blueskill = [
 		members: ['佐久間咲也','碓冰真澄','攝津萬里']
 	},
 	{
+		// bug from komoe
 		name: '孑然一身',
-		buff: 1.24,
+		buff: 1.36,
 		members: ['佐久間咲也','御影密','雪白東']
 	},
 	{
@@ -134,8 +139,9 @@ const blueskill = [
 		members: ['茅崎至','月岡紬']
 	},
 	{
+		// bug from komoe
 		name: '表兄弟',
-		buff: 1.12,
+		buff: 1.24,
 		members: ['向坂椋','兵頭十座']
 	},
 	{
@@ -151,8 +157,9 @@ const blueskill = [
 ];
 const yellowskill = [
 	{
+		// bug from komoe
 		name: '新生夏組',
-		buff: 1.48,
+		buff: 1.6,
 		members: ['皇天馬', '瑠璃川幸', '向坂椋', '斑鳩三角', '三好一成']
 	},
 	{
@@ -216,8 +223,9 @@ const yellowskill = [
 		members: ['三好一成','七尾太一']
 	},
 	{
+		// bug from komoe
 		name: '藝術家氣質',
-		buff: 1.12,
+		buff: 1.24,
 		members: ['三好一成','有栖川譽']
 	}
 ];
