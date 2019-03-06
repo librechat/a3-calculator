@@ -150,7 +150,10 @@ app.controller("CardGroup", ["$scope", function($scope){
 		$scope.cards[0] = util.CopyByValue(util.Const.card_template);
 		$scope.cards[0].id = new Date().getTime();
 
-		for(var i=0; i<3; i++) $scope.guests[i] = util.CopyByValue(util.Const.card_template);
+		for(var i=0; i<3; i++) {
+			var color = util.Const.colors[i];
+			$scope.guests[color] = util.CopyByValue(util.Const.member_template);
+		}
 		
 		var file_input = angular.element(document.getElementsByName('cardfile')[0]);
 		file_input.val(null);
