@@ -95,7 +95,7 @@ IsLegal = function(cards, characters){
             return warning.illegal_value;
         }
         if(typeof(cards[i].character) != 'string') return warning.illegal_character;
-        if(typeof(character_dic[cards[i].character]) === 'undefined') return warning.illegal_character;
+        if(cards[i].character !== "" && typeof(character_dic[cards[i].character]) === 'undefined') return warning.illegal_character;
         if(typeof(cards[i].cardname) != 'string') return warning.illegal_name;
         if(typeof(cards[i].event) != 'boolean' && !CheckNaturalNum(cards[i].event)) return warning.illegal_event;
     }
