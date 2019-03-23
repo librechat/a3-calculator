@@ -2,10 +2,18 @@ var util = require('./util.js');
 var data = require('./data.js');
 var jq = require('./custom_jquery.js');
 var calculator = require('./calculator.js');
+var Airtable = require('airtable');
+
 util.ExtendArray();
+
+Airtable.configure({
+    endpointUrl: 'https://api.airtable.com',
+    apiKey: 'key9lgQlMZwPB3bey'
+});
 
 var app = angular.module("A3Calculator", []);
 var reader = new FileReader();
+
 app.controller("CardGroup", ["$scope", function($scope){
 	$scope.characters = [];
 	$scope.redskill = [];
@@ -37,6 +45,13 @@ app.controller("CardGroup", ["$scope", function($scope){
 	$scope.event_card_value = calculator.event_card_value;
 
 	$scope.init = function(){
+
+		/*var dbase = new Airtable({apiKey: 'key9lgQlMZwPB3bey'}).base('appUfSn16NV7lpH7c');
+		dbase('Card').find('recU3EoZetbWIiS45', function(err, record) {
+		    if (err) { console.error(err); return; }
+		    console.log(record);
+		});*/
+
 		reader.onload = (function(file){
 			return function(event){
 				var data_string = event.target.result;

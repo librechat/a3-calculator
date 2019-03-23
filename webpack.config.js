@@ -5,5 +5,11 @@ module.exports = {
   output: {
     path: path.join(__dirname, 'controller'),
     filename: 'bundle.js'
+  },
+
+  resolve: {
+  	alias: {
+  		airtable: '../include/js/airtableapi/airtable.js'
+  	}
   }
-}
+};
