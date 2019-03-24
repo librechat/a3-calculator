@@ -9,15 +9,16 @@ html
 		script(src="../include/js/bootstrap.min.js")
 		script(src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js")
 		script(src="../controller/bundle.js")
+		script(src="../controller/custom_jquery.js")
 	body(ng-app="A3Calculator")
 		.loading
 		.container
 			.page-header.text-center
-				h1 A3 台版組隊計算機
-				h5 *非穩定版本，可能有bug，結果僅供參考*
-				h5 *建議使用電腦瀏覽器*
-				h5 目前遊戲(3/4更新)存在技能bug，可參考
-					a(href="https://forum.gamer.com.tw/C.php?bsn=31666&snA=332") 巴哈討論串
+				h3 A3 台版組隊計算機
+				h6 *非穩定版本，可能有bug，結果僅供參考*
+				h6 *建議使用電腦瀏覽器*
+				h6 目前遊戲(3/4更新)存在技能bug，可參考
+					a(href="https://forum.gamer.com.tw/C.php?bsn=31666&snA=332" target="_blank") 巴哈討論串
 				.btn-group(role="group" aria-label="menu")
 					button.btn.btn-default(type="button" data-toggle="modal" data-target="#help") 說明書
 					a.btn.btn-default(type="button" target="_blank" href="https://docs.google.com/spreadsheets/d/1v6cGRqbCGUNcawIkyI7oO2lUP4YpmZZnqrl8Iw9jons/edit?usp=sharing") 問題回報
@@ -27,13 +28,31 @@ html
 							.modal-header
 								button.close(type="button" data-dismiss="modal" aria-label="Close") &times;
 								h4.modal-title 使用說明
+							.modal-body.content-li
+								ul
+									li "我的卡片"可以填入自己的卡片和客演角色(可不填)
+									li 組隊區(紅組、黃組、藍組)可以自由設定隊員
+									li 按自動組隊之後組好的三色隊伍會顯示在組隊區
+									li 填好的卡片可以按匯出存成txt檔，下次按匯入就可以讀取之前的卡片記錄
+									li 星級和卡片名稱不是必填，只是用來防止忘記是哪張卡
+								dt 自動填入 (2019.03.24)
+								ul
+									li 卡片名稱可以手動輸入或從下拉式選單(資料庫內容)選擇
+									li 從下拉式選單選擇卡片名稱的話會自動填入當前開花數可達到的最大數值
+									li 選擇不同開花數時最大數值會自動變更
+									li 自動填入的數值仍可手動修改掉，按套用資料庫數值會全部重新自動填入
+									li 自動填入遇到資料庫有缺失的數值會填入0
+									li 連線到資料庫有時會有延遲，請耐心等待><
+									li 
+										a(href="https://airtable.com/shrYnVnCdOJOtBYOy" target="_blank" ) 資料庫
+										span 需要大家熱心的協力完善：
+										a(href="https://forum.gamer.com.tw/C.php?bsn=31666&snA=577&tnum=3" target="_blank" ) 傳送門
+				.modal.fade#loading
+					.modal-dialog.modal-dialog-centered.modal-sm(role="dialog")
+						.modal-content
 							.modal-body
-								ol
-									li.content-li "我的卡片"可以填入自己的卡片和客演角色(可不填)
-									li.content-li 組隊區(紅組、黃組、藍組)可以自由設定隊員
-									li.content-li 按自動組隊之後組好的三色隊伍會顯示在組隊區
-									li.content-li 填好的卡片可以按匯出存成txt檔，下次按匯入就可以讀取之前的卡片記錄
-									li.content-li 星級和卡片名稱不是必填，只是用來防止忘記是哪張卡
+								h4 載入資料中...
+								.spinner
 			div(ng-controller="CardGroup")
 				ul.nav.nav-tabs(role="tablist")
 					li.active(role="presentation")
@@ -56,19 +75,20 @@ html
 											input.form-control.input-sm#cardcount(ng-model="cardcount" type="number" min="1" max="500" ng-blur="changecardcount()" style="width:80px;")
 											span 張卡
 										td.col-md-4
-										td.col-md-5
-											.btn-group-sm.right-align(role="group" aria-label="cards-operation")
-												span 同組加成
+											span 同組加成
 												select.form-control.input-sm(style="padding:1px; width:160px;" ng-model="eventgroup" option-value)
 													option(value=-1) 無
 													option(value=0) 春組
 													option(value=1) 夏組
 													option(value=2) 秋組
 													option(value=3) 冬組
+										td.col-md-5
+											.btn-group-sm.right-align(role="group" aria-label="cards-operation")
 												input.custom-file-input(name="cardfile" type="file" id="uploadfile" placeholder="匯入" custom-file-change="upload")
 												label.btn.btn-secondary.custom-file-label(for="uploadfile") 匯入
 												button.btn.btn-secondary(type="button" ng-click="download()") 匯出
 												button.btn.btn-secondary(type="button" ng-click="clear()") 清除
+												button.btn.btn-secondary(type="button" ng-click="usedb()") 套用資料庫數值
 												button.btn.btn-secondary(type="button" ng-click="autoarrangeall()") 自動組隊
 							table.table.table-bordered.text-center.white-bg
 								tbody
@@ -84,33 +104,37 @@ html
 									tr(ng-repeat="guest in guests track by $index")
 										td.col-md-1(ng-class="{0: 'yellow-bg', 1: 'red-bg', 2: 'blue-bg'}[$index]") 客演角色
 										td.col-md-2
-											select.form-control.input-sm(ng-model="guest.character" type="text")
+											select.form-control.input-sm(ng-model="guest.character" type="text" ng-change="onguestcharacterchange(guest.character, '{{guest.character}}', $index)")
 												option(value="" disabled selected) 選擇角色
 												option(value="") 無
 												option(ng-repeat="character in characters") {{character}}
 										td.col-md-2
 											span 【
-											input.form-control.input-sm(ng-model="guest.cardname" type="text" placeholder="卡片名稱")
+											.combo
+												select.form-control.input-sm.combo-select(type="text" id="{{ 'guest-select-' + $index }}")
+													option(value="" disabled selected) 選擇卡片
+													option(ng-repeat="cardname in cardnames[guest.character]") {{cardname}}
+												input.form-control.input-sm.combo-input(ng-model="guest.cardname" type="text" placeholder="卡片名稱" ng-change="onguestchange($index)")
 											span  】
 										td.col-md-1
-											select.form-control.input-sm(style="padding:1px;" ng-model="guest.star" option-value)
+											select.form-control.input-sm(name="{{ 'guest-data-' + $index }}" style="padding:1px;" ng-model="guest.star" option-value)
 												option(value=1) N
 												option(value=2) R
 												option(value=3) SR
 												option(value=4) SSR
 										td.col-md-1
-											select.form-control.input-sm(style="padding:1px;" ng-model="guest.dupe" option-value)
+											select.form-control.input-sm(style="padding:1px;" ng-model="guest.dupe" ng-change="onguestchange($index)" option-value)
 												option(value=0) 零花
 												option(value=1) 一花
 												option(value=2) 滿開
 										td.col-md-3
 											.row.crowded-row
 												.col-md-4.crowded-col
-													input.form-control.wide.input-sm.yellow-bg(ng-model="guest.value" type="number" min="0" ng-class="{1:'hide',2:'hide'}[$index]")
+													input.form-control.wide.input-sm.yellow-bg(name="{{ 'guest-data-' + $index }}" ng-model="guest.value" type="number" min="0" ng-class="{1:'hide',2:'hide'}[$index]")
 												.col-md-4.crowded-col
-													input.form-control.wide.input-sm.red-bg(ng-model="guest.value" type="number" min="0" ng-class="{0:'hide',2:'hide'}[$index]")
+													input.form-control.wide.input-sm.red-bg(name="{{ 'guest-data-' + $index }}" ng-model="guest.value" type="number" min="0" ng-class="{0:'hide',2:'hide'}[$index]")
 												.col-md-4.crowded-col
-													input.form-control.wide.input-sm.blue-bg(ng-model="guest.value" type="number" min="0" ng-class="{0:'hide',1:'hide'}[$index]")
+													input.form-control.wide.input-sm.blue-bg(name="{{ 'guest-data-' + $index }}" ng-model="guest.value" type="number" min="0" ng-class="{0:'hide',1:'hide'}[$index]")
 										td.col-md-1
 											select.form-control.input-sm(style="padding:1px;" ng-model="guest.event" option-value)
 												option(value=0) 無
@@ -124,32 +148,36 @@ html
 									tr(ng-repeat="card in cards track by $index")
 										td.col-md-1 {{$index+1}}
 										td.col-md-2
-											select.form-control.input-sm(ng-model="card.character" type="text")
+											select.form-control.input-sm(ng-model="card.character" type="text" ng-change="oncardcharacterchange(card.character, '{{card.character}}', $index)")
 												option(value="" disabled selected) 選擇角色
 												option(ng-repeat="character in characters") {{character}}
 										td.col-md-2
 											span 【
-											input.form-control.input-sm(ng-model="card.cardname" type="text" placeholder="卡片名稱")
+											.combo
+												select.form-control.input-sm.combo-select(type="text" id="{{ 'card-select-' + $index }}")
+													option(value="" disabled selected) 選擇卡片
+													option(ng-repeat="cardname in cardnames[card.character]") {{cardname}}
+												input.form-control.input-sm.combo-input(ng-model="card.cardname" type="text" placeholder="卡片名稱" ng-change="oncardchange($index)")
 											span  】
 										td.col-md-1
-											select.form-control.input-sm(style="padding:1px;" ng-model="card.star" option-value)
+											select.form-control.input-sm(name="{{ 'card-data-' + $index }}" style="padding:1px;" ng-model="card.star" option-value)
 												option(value=1) N
 												option(value=2) R
 												option(value=3) SR
 												option(value=4) SSR
 										td.col-md-1
-											select.form-control.input-sm(style="padding:1px;" ng-model="card.dupe" option-value)
+											select.form-control.input-sm(style="padding:1px;" ng-model="card.dupe" ng-change="oncardchange($index)" option-value)
 												option(value=0) 零花
 												option(value=1) 一花
 												option(value=2) 滿開
 										td.col-md-3
 											.row.crowded-row
 												.col-md-4.crowded-col
-													input.form-control.wide.input-sm.yellow-bg(ng-model="card.yellow" type="number" min="0")
+													input.form-control.wide.input-sm.yellow-bg(name="{{ 'card-data-' + $index }}" ng-model="card.yellow" type="number" min="0")
 												.col-md-4.crowded-col
-													input.form-control.wide.input-sm.red-bg(ng-model="card.red" type="number" min="0")
+													input.form-control.wide.input-sm.red-bg(name="{{ 'card-data-' + $index }}" ng-model="card.red" type="number" min="0")
 												.col-md-4.crowded-col
-													input.form-control.wide.input-sm.blue-bg(ng-model="card.blue" type="number" min="0")
+													input.form-control.wide.input-sm.blue-bg(name="{{ 'card-data-' + $index }}" ng-model="card.blue" type="number" min="0")
 										td.col-md-1
 											select.form-control.input-sm(style="padding:1px;" ng-model="card.event" option-value)
 												option(value=0) 無
@@ -188,7 +216,7 @@ html
 						table.table.table-bordered.text-center.white-bg(ng-class="{'red': 'red-line', 'blue': 'blue-line', 'yellow': 'yellow-line', 'gray': 'gray-line'}[color]")
 							tbody
 								tr
-									td.col-md-2(ng-repeat="member in teams[color].members")
+									td.col-md-2(ng-repeat="member in teams[color].members track by $index")
 										.row
 											.buff-card.col-md-4(style="padding: 1px;  line-height:30px;")
 												select.form-control.input-sm(style="padding:1px;" ng-model="member.event" ng-change="calculate()" option-value)
@@ -196,28 +224,32 @@ html
 													option(value=1) 旬
 													option(value=2) 小旬
 											.star.col-md-4(style="padding:1px;")
-												select.form-control.input-sm(style="padding:1px;" ng-model="member.star" option-value)
+												select.form-control.input-sm(name="{{ 'member-data-' + $index }}" style="padding:1px;" ng-model="member.star" option-value)
 													option(value=1) N
 													option(value=2) R
 													option(value=3) SR
 													option(value=4) SSR
 											.card-count.col-md-4(style="padding:1px;")
-												select.form-control.input-sm(style="padding:1px;" ng-model="member.dupe" ng-change="calculate()" option-value)
+												select.form-control.input-sm(style="padding:1px;" ng-model="member.dupe" ng-change="calculate(); onmemberchange($index)" option-value)
 													option(value=0) 零花
 													option(value=1) 一花
 													option(value=2) 滿開
 										.character
-											select.form-control.input-sm(ng-model="member.character" type="text" ng-change="calculate()")
+											select.form-control.input-sm(ng-model="member.character" type="text" ng-change="calculate(); onmembercharacterchange(member.character, '{{member.character}}', $index)")
 												option(value="" disabled selected) 選擇角色
 												option(value="") 無
 												option(ng-repeat="character in characters") {{character}}
 										.card-name
 											span 【
-											input.form-control.input-sm(ng-model="member.cardname" type="text" placeholder="卡片名稱")
+											.combo
+												select.form-control.input-sm.combo-select(type="text" id="{{ 'member-select-' + $index}}")
+													option(value="" disabled selected) 選擇卡片
+													option(ng-repeat="cardname in cardnames[member.character]") {{cardname}}
+												input.form-control.input-sm.combo-input(ng-model="member.cardname" type="text" placeholder="卡片名稱" ng-change="onmemberchange($index)")
 											span  】
 										.row.crowded-row
 											.value(ng-class="{true: 'col-md-5 crowded-col', false: 'col-md-12'}[member.event != 0]")
-												input.form-control.wide.input-sm(ng-model="member.value" type="number" min="0" ng-change="calculate()")
+												input.form-control.wide.input-sm(name="{{ 'member-data-' + $index }}" ng-model="member.value" type="number" min="0" ng-change="calculate()")
 											.value(ng-class="{true: 'col-md-2  crowded-col', false: 'hidden'}[member.event != 0]")
 												span.glyphicon.glyphicon-arrow-right.vertical-middle
 											.value(ng-class="{true: 'col-md-5  crowded-col', false: 'hidden'}[member.event != 0]")
@@ -225,4 +257,7 @@ html
 				.tail
 				//-img.skillimg(ng-src="{{imagepath[color]}}" ng-class="{'gray': 'gray-img', 'red': 'color-img', 'blue': 'color-img', 'yellow': 'color-img'}[color]")
 		.tail
-			a(href="https://karikan.web.fc2.com/linkskill/fantizi.html" target="_blank") 感謝參考資料：RH大大
+			h6 感謝參考資料：
+				a(href="https://karikan.web.fc2.com/linkskill/fantizi.html" target="_blank") RH大大的技能整理
+				span 、
+				a(href="https://airtable.com/shrYnVnCdOJOtBYOy" target="_blank" ) 資料庫

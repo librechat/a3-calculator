@@ -59,7 +59,9 @@ Arrangeable = function(cards, characters){
     var different_count = 0;
     var character_dic = {};
     for(var i=0; i<characters.length; i++){
+        var chara = characters[i].replace(/\s+/g, "");
         character_dic[characters[i]] = 0;
+        character_dic[chara] = 0;
     }
     for(var i=0; i<cards.length; i++){
         var char = cards[i].character;
@@ -79,7 +81,9 @@ IsLegal = function(cards, characters){
 
     var character_dic = {};
     for(var i=0; i<characters.length; i++){
+        var chara = characters[i].replace(/\s+/g, "");
         character_dic[characters[i]] = 0;
+        character_dic[chara] = 0;
     }
 
     for(var i=0; i<cards.length; i++){
@@ -95,7 +99,9 @@ IsLegal = function(cards, characters){
             return warning.illegal_value;
         }
         if(typeof(cards[i].character) != 'string') return warning.illegal_character;
+        
         if(cards[i].character !== "" && typeof(character_dic[cards[i].character]) === 'undefined') return warning.illegal_character;
+        
         if(typeof(cards[i].cardname) != 'string') return warning.illegal_name;
         if(typeof(cards[i].event) != 'boolean' && !CheckNaturalNum(cards[i].event)) return warning.illegal_event;
     }

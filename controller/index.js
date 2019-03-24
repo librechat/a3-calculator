@@ -1,11 +1,15 @@
 var util = require('./util.js');
 var data = require('./data.js');
-var jq = require('./custom_jquery.js');
+var jq = require('./ctrl_jquery.js');
 var calculator = require('./calculator.js');
+var database = require('./database.js');
+var async = require('Async');
+
 util.ExtendArray();
 
 var app = angular.module("A3Calculator", []);
 var reader = new FileReader();
+
 app.controller("CardGroup", ["$scope", function($scope){
 	$scope.characters = [];
 	$scope.redskill = [];
@@ -14,6 +18,8 @@ app.controller("CardGroup", ["$scope", function($scope){
 	$scope.redteam = null;
 	$scope.blueteam = null;
 	$scope.yellowteam = null;
+	$scope.cardnames = {};
+
 	$scope.cards = [];
 
 	$scope.teams = {'red': $scope.redteam, 'blue': $scope.blueteam, 'yellow': $scope.yellowteam};
@@ -37,42 +43,9 @@ app.controller("CardGroup", ["$scope", function($scope){
 	$scope.event_card_value = calculator.event_card_value;
 
 	$scope.init = function(){
-		reader.onload = (function(file){
-			return function(event){
-				var data_string = event.target.result;
-				var cards;
-				try {
-					cards = JSON.parse(data_string);
-				} catch(e){
-					console.log(e);
-					jq.toggle_alert($scope, false, util.Const.warning.illegal_cardfile);
-					return;
-				}
-				var illegal = util.IsLegal(cards, $scope.characters);
-				console.log(illegal);
-				jq.toggle_alert($scope, illegal === null, illegal);			
-				if(illegal !== null) {
-					$scope.$apply();
-					return;
-				}
 
-				var timestamp = new Date().getTime();
-				var cnt = 0;
-				for(var i=0; i<cards.length; i++){
-					if(cards[i].id == null) {
-						cards[i].id = timestamp + cnt;
-						cnt++;
-					}
-					if(typeof(cards[i].event) === 'boolean'){
-						if(cards[i].event === true) cards[i].event = 1;
-						else cards[i].event = 0;
-					}
-				}
-				$scope.cards = cards;
-				$scope.cardcount = cards.length;
-				$scope.$apply();
-			}
-		})();
+		// register read file callback
+		reader.onload = ($scope.onfileopen)();
 		//load json basic data;
 		var card = util.CopyByValue(util.Const.card_template);
 		card.id = 0;
@@ -91,17 +64,24 @@ app.controller("CardGroup", ["$scope", function($scope){
 			$scope.teams[color] = team;
 		}	
 
-		$scope.cardcount = $scope.cards.length;
+		// init data
+		//var characters = database.get_characters();
+		
 		$scope.characters = data.characters;
+		$scope.cardcount = $scope.cards.length;
 		$scope.redskill = data.redskill;
 		$scope.blueskill = data.blueskill;
 		$scope.yellowskill = data.yellowskill;
 		$scope.skill = {'red': $scope.redskill, 'blue': $scope.blueskill, 'yellow': $scope.yellowskill};
-	}
 
+		for(var i=0; i<data.characters.length; i++){
+			$scope.cardnames[data.characters[i]] = database.get_card_names(data.characters[i]);
+		}
+	}
+	//========== calculation ===========
 	$scope.calculate = function(){
 		var color = $scope.color;
-		console.log($scope.teams[color].members.length);
+		//console.log($scope.teams[color].members.length);
 		calculator.calculate_total($scope.teams[color], $scope.skill[color], $scope.eventgroup);
 	}
 	$scope.changecolor = function(color){
@@ -158,6 +138,7 @@ app.controller("CardGroup", ["$scope", function($scope){
 		var file_input = angular.element(document.getElementsByName('cardfile')[0]);
 		file_input.val(null);
 	}
+	//============= file operations ============
 	$scope.download = function(){
 		//prepare data
 		var d = new Date();
@@ -188,15 +169,58 @@ app.controller("CardGroup", ["$scope", function($scope){
 		console.log(filename);		
 		reader.readAsText(file);
 	}
+	$scope.onfileopen = function(file){
+		return function(event){
+			var data_string = event.target.result;
+			var cards;
+			try {
+				cards = JSON.parse(data_string);
+			} catch(e){
+				console.log(e);
+				jq.toggle_alert($scope, false, util.Const.warning.illegal_cardfile);
+				return;
+			}
 
+			var illegal = util.IsLegal(cards, $scope.characters);
+
+			jq.toggle_alert($scope, illegal === null, illegal);			
+			if(illegal !== null) {
+				console.log(illegal);
+				$scope.$apply();
+				return;
+			}
+
+			var timestamp = new Date().getTime();
+			var cnt = 0;
+			for(var i=0; i<cards.length; i++){
+				if(cards[i].id == null) {
+					cards[i].id = timestamp + cnt;
+					cnt++;
+				}
+				if(typeof(cards[i].event) === 'boolean'){
+					if(cards[i].event === true) cards[i].event = 1;
+					else cards[i].event = 0;
+				}
+				if(cards[i].character.indexOf(' ') === -1){
+					cards[i].character = data.characters.find(function(element){
+						return cards[i].character == element.replace(/\s+/g, "");
+					});
+				}
+			}
+			$scope.cards = cards;
+			$scope.cardcount = cards.length;
+			$scope.$apply();
+		}
+	}
+	//============ ui actions ===========
 	$scope.addcard = function(copyindex, new_one){
 		var timestamp = new Date().getTime();
 		var card;
-		console.log(new_one);
+		//console.log(new_one);
 		if(new_one) card = util.CopyByValue(util.Const.card_template);
 		else card = util.CopyByValue($scope.cards[copyindex]);
 		card.id = timestamp;
-		console.log(card);
+		//console.log(card);
 		$scope.cards.splice(copyindex + 1, 0, card);
 	}
 	$scope.removecard = function(cardindex){
@@ -207,11 +231,211 @@ app.controller("CardGroup", ["$scope", function($scope){
 		}
 		else $scope.cards.splice(cardindex, 1);
 	}
-	$scope.$watch('cards', function(){
+	//========= database interactions ==============
+	$scope.$watch('cards', function(newValue, oldValue){
 		var arrange_msg = util.Arrangeable($scope.cards, $scope.characters);		
 		jq.toggle_alert($scope, arrange_msg === null, arrange_msg);
 		$scope.cardcount = $scope.cards.length;
 	}, true);
+
+	$scope.usedb = function(){
+		jq.loading_screen(true);
+
+		async.waterfall([
+			function(next){
+				var errorlist = [];
+
+				async.forEachOf($scope.guests,
+					function(guest, key, callback){
+						if($scope.characters.find(function(element){return element == guest.character; }) == undefined) {
+							errorlist.push("character");
+							return callback(null);
+						}
+						if($scope.cardnames[guest.character].find(function(element){ return element == guest.cardname; }) != undefined){
+							database.get_card_info(guest.character, guest.cardname, guest.dupe, function(err, card_info){
+								if(err !== null) {
+									errorlist.push(err);
+									return callback(null);
+								}
+								guest.value = card_info[key];
+								guest.star = card_info.rarity;
+								return callback(null);
+							});
+						}
+						else {
+							errorlist.push("cardname");
+							return callback(null);
+						}
+					}, function(err){
+						if(err) return next(err);
+						next(null, errorlist);
+					}
+				);
+			},
+			function(errorlist, next){				
+				async.each($scope.cards,
+					function(card, callback){
+						if($scope.characters.find(function(element){return element == card.character; }) == undefined) {
+							errorlist.push("character");
+							return callback(null);
+						}
+						if($scope.cardnames[card.character].find(function(element){ return element == card.cardname; }) != undefined){
+							database.get_card_info(card.character, card.cardname, card.dupe, function(err, card_info){
+								if(err !== null) {
+									errorlist.push(err);
+									return callback(null);
+								}
+								card.yellow = card_info.yellow;
+								card.red = card_info.red;
+								card.blue = card_info.blue;
+								card.star = card_info.rarity;
+								return callback(null);
+							});
+						}
+						else {
+							errorlist.push("cardname");
+							return callback(null);
+						}				
+					}, function(err){
+						if(err) return next(err);
+						next(null, errorlist);
+					}
+				);
+			}
+		], function(err, errorlist){
+			if(err !== null || errorlist.length === $scope.cards.length + 3) {
+				console.log("err: "+err);
+				jq.loading_screen(false);
+				return;
+			}
+			$scope.$apply();
+			jq.loading_screen(false);
+		});
+	}
+
+	$scope.onguestcharacterchange = function(newValue, oldValue, index){
+		if(oldValue.length < 3) return;
+
+		var color = Object.keys($scope.guests)[index];
+		var guest = $scope.guests[Object.keys($scope.guests)[index]];
+		if($scope.characters.find(function(element){return element == guest.character; }) == undefined) return;
+		if($scope.cardnames[newValue].find(function(element){ return element == guest.cardname; }) != undefined){
+			jq.loading_slots('guest', index, true);
+			database.set_card_info(guest, function(card_info){
+				guest.value = card_info[color];
+				guest.star = card_info.rarity;
+				$scope.$apply();
+				jq.loading_slots('guest', index, false);
+			});
+		}
+		else if($scope.cardnames[oldValue].find(function(element){ return element == guest.cardname; }) != undefined){
+			guest.cardname = "";
+			jq.clear_selection('guest', index);
+			return;
+		}
+		return;
+	}
+	$scope.onguestchange = function(index){
+		var color = Object.keys($scope.guests)[index];
+		var guest = $scope.guests[Object.keys($scope.guests)[index]];
+
+		if($scope.characters.find(function(element){return element == guest.character; }) == undefined) return;
+		if($scope.cardnames[guest.character].find(function(element){ return element == guest.cardname; }) != undefined){
+			jq.loading_slots('guest', index, true);
+			database.set_card_info(guest, function(card_info){
+				guest.value = card_info[color];
+				guest.star = card_info.rarity;
+				$scope.$apply();
+				jq.loading_slots('guest', index, false);
+			});
+		}
+		else {
+			console.log("not found this card");
+		}
+	}
+	$scope.oncardcharacterchange = function(newValue, oldValue, index){
+		if(oldValue.length < 3) return;
+
+		var card = $scope.cards[index];
+		if($scope.cardnames[newValue].find(function(element){ return element == card.cardname; }) != undefined){
+			jq.loading_slots('card', index, true);
+			database.set_card_info(card, function(card_info){
+				card.yellow = card_info.yellow;
+				card.red = card_info.red;
+				card.blue = card_info.blue;
+				card.star = card_info.rarity;
+				$scope.$apply();
+				jq.loading_slots('card', index, false);
+			});
+		}
+		else if($scope.cardnames[oldValue].find(function(element){ return element == card.cardname; }) != undefined){
+			card.cardname = "";
+			jq.clear_selection('card', index);
+			return;
+		}
+		return;
+	}
+	$scope.oncardchange = function(index){
+		var card = $scope.cards[index];
+
+		if($scope.characters.find(function(element){return element == card.character; }) == undefined) return;
+		if($scope.cardnames[card.character].find(function(element){ return element == card.cardname; }) != undefined){
+			jq.loading_slots('card', index, true);
+			database.set_card_info(card, function(card_info){
+				card.yellow = card_info.yellow;
+				card.red = card_info.red;
+				card.blue = card_info.blue;
+				card.star = card_info.rarity;
+				$scope.$apply();
+				jq.loading_slots('card', index, false);
+			});
+		}
+		else {
+			console.log("not found this card");
+		}
+	}
+
+	$scope.onmembercharacterchange = function(newValue, oldValue, index){
+		if(oldValue.length < 3) return;
+
+		var member = $scope.teams[$scope.color].members[index];
+		if($scope.cardnames[newValue].find(function(element){ return element == member.cardname; }) != undefined){
+			jq.loading_slots('member', index, true);
+			database.set_card_info(guest, function(card_info){
+				member.star = card_info.rarity;
+				var pre_value = member.value;
+				member.value = card_info[$scope.color];
+				if(pre_value != member.value) $scope.calculate();
+				$scope.$apply();
+				jq.loading_slots('member', index, false);
+			});
+		}
+		else if($scope.cardnames[oldValue].find(function(element){ return element == member.cardname; }) != undefined){
+			member.cardname = "";
+			jq.clear_selection('member', index);
+			return;
+		}
+		return;
+	}
+	$scope.onmemberchange = function(index){
+		var member = $scope.teams[$scope.color].members[index];
+
+		if($scope.characters.find(function(element){return element == member.character; }) == undefined) return;
+		if($scope.cardnames[member.character].find(function(element){ return element == member.cardname; }) != undefined){
+			jq.loading_slots('member', index, true);
+			database.set_card_info(member, function(card_info){
+				member.star = card_info.rarity;
+				var pre_value = member.value;
+				member.value = card_info[$scope.color];
+				if(pre_value != member.value) $scope.calculate();
+				$scope.$apply();
+				jq.loading_slots('member', index, false);
+			});
+		}
+		else {
+			console.log("not found this card");
+		}
+	}
 
 	$scope.init();
 }]);
