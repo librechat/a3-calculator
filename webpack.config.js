@@ -1,15 +1,25 @@
 var path = require('path')
 
 module.exports = {
-  entry: ['./controller/index'], // .js after index is optional
-  output: {
-    path: path.join(__dirname, 'controller'),
-    filename: 'bundle.js'
-  },
+	entry: {
+		index: './controller/index',
+		//airtable: './include/js/airtableapi/airtable.js'
+	}, // .js after index is optional
+	output: {
+		//filename: '[name].bundle.js',
+		//path: path.resolve(__dirname, 'dist')
 
-  resolve: {
-  	alias: {
-  		airtable: '../include/js/airtableapi/airtable.js'
-  	}
-  }
+		path: path.join(__dirname, 'controller'),
+		filename: 'bundle.js'
+	},
+
+	resolve: {
+		alias: {
+			airtable: '../include/js/airtableapi/airtable.js',
+			Async: '../include/js/airtableapi/async.min.js'
+		}
+	},
+	node: {
+		fs: 'empty'
+	}
 };

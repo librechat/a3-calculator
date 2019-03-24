@@ -1,16 +1,9 @@
-toggle_alert = function(scope, flag, text){
-	var alert = angular.element(document.getElementById('arrangealert'));	
-	if(!flag) {
-		scope.warning_msg = text;
-		console.log(scope.warning_msg);
-		alert.fadeIn();
-	}
-	else {
-		scope.warning_msg = "";
-		alert.fadeOut();
-	}
-}
+$(document).ready(function(){
+	$(document).on('change','.combo-select',function(){
+		var text = $(this).val();
 
-module.exports = {
-	toggle_alert
-};
+		var combo_input = $(this).next('.combo-input');
+		combo_input.val(text);
+		combo_input.trigger('input');
+	});
+});

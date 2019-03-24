@@ -21,6 +21,9 @@ body{
 .table{
 	margin: 0px;
 }
+datalist{
+	display: none;
+}
 caption{
 	border: 1px solid #DDD;
 	border-bottom: 0px;
@@ -216,4 +219,40 @@ input, button{
 	width: 0;
 	/*display: inline-block;*/
 	vertical-align: middle;
+}
+.combo{
+	width: 75%;
+	display: inline-block;
+	text-align: left;
+	position: relative;
+}
+.combo-select{
+	width: 100%;
+}
+.combo-input{
+	width: 85%;
+	position: absolute;
+	top: 0px;
+	background-color: white;
+}
+.spinner-group{
+	width:80%;
+}
+@keyframes spinner {
+  to {transform: rotate(360deg);}
+}
+.spinner:before {
+	content: '';
+	box-sizing: border-box;
+	position: absolute;
+	top: 50%;
+	left: 25%;
+	width: 20px;
+	height: 20px;
+	margin-top: -10px;
+	margin-left: -10px;
+	border-radius: 50%;
+	border: 2px solid #ccc;
+	border-top-color: #333;
+	animation: spinner .6s linear infinite;
 }
