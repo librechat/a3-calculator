@@ -241,27 +241,38 @@ app.controller("CardGroup", ["$scope", function($scope){
 	$scope.usedb = function(){
 		jq.loading_screen(true);
 
-		async.each($scope.cards,
-			function(card, callback){
-				if($scope.characters.find(function(element){return element == card.character; }) == undefined) return callback("character");
-				if($scope.cardnames[card.character].find(function(element){ return element == card.cardname; }) != undefined){
-					database.get_card_info(card.character, card.cardname, card.dupe, function(err, card_info){
-						if(err !== null) return callback(err);
-						card.yellow = card_info.yellow;
-						card.red = card_info.red;
-						card.blue = card_info.blue;
-						card.star = card_info.rarity;
-						return callback(null);
-					});
-				}
-				else return callback("cardname");				
-			}, function(err){
-				
-			}
-		);
 		async.waterfall([
 			function(next){
 				var errorlist = [];
+
+				async.forEachOf($scope.guests,
+					function(guest, key, callback){
+						if($scope.characters.find(function(element){return element == guest.character; }) == undefined) {
+							errorlist.push("character");
+							return callback(null);
+						}
+						if($scope.cardnames[guest.character].find(function(element){ return element == guest.cardname; }) != undefined){
+							database.get_card_info(guest.character, guest.cardname, guest.dupe, function(err, card_info){
+								if(err !== null) {
+									errorlist.push(err);
+									return callback(null);
+								}
+								guest.value = card_info[key];
+								guest.star = card_info.rarity;
+								return callback(null);
+							});
+						}
+						else {
+							errorlist.push("cardname");
+							return callback(null);
+						}
+					}, function(err){
+						if(err) return next(err);
+						next(null, errorlist);
+					}
+				);
+			},
+			function(errorlist, next){				
 				async.each($scope.cards,
 					function(card, callback){
 						if($scope.characters.find(function(element){return element == card.character; }) == undefined) {
@@ -292,7 +303,7 @@ app.controller("CardGroup", ["$scope", function($scope){
 				);
 			}
 		], function(err, errorlist){
-			if(err !== null || errorlist.length === $scope.cards.length) {
+			if(err !== null || errorlist.length === $scope.cards.length + 3) {
 				console.log("err: "+err);
 				jq.loading_screen(false);
 				return;
@@ -307,6 +318,7 @@ app.controller("CardGroup", ["$scope", function($scope){
 
 		var color = Object.keys($scope.guests)[index];
 		var guest = $scope.guests[Object.keys($scope.guests)[index]];
+		if($scope.characters.find(function(element){return element == guest.character; }) == undefined) return;
 		if($scope.cardnames[newValue].find(function(element){ return element == guest.cardname; }) != undefined){
 			jq.loading_slots('guest', index, true);
 			database.set_card_info(guest, function(card_info){

@@ -16,7 +16,7 @@ module.exports = {
 	resolve: {
 		alias: {
 			airtable: '../include/js/airtableapi/airtable.js',
-			Async: '../include/js/airtableapi/async.min.js'
+			Async: '../include/js/async.min.js'
 		}
 	},
 	node: {
