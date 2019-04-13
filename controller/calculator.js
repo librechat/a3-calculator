@@ -25,8 +25,40 @@ sort_cards = function(cards, color, left, right){
 	sort_cards(cards, color, left, j-1);
 	sort_cards(cards, color, j+1, right);
 }
+sort_skills = function(skills, left, right){
+	if(left >= right) return;
+	var pivot = skills[left].buff;
+	var i=left;
+	var j=right+1;
+	while(true){
+		var value = 0;
+		while(i+1 <= right && skills[++i].buff > pivot);
+		while(j-1 >= left && skills[--j].buff < pivot);
+		if(i < j) {
+			//swap
+			var temp = skills[i];
+			skills[i] = skills[j];
+			skills[j] = temp;
+		}
+		else break;
+	}
+	var temp = skills[left];
+	skills[left] = skills[j];
+	skills[j] = temp;
+	sort_skills(skills, left, j-1);
+	sort_skills(skills, j+1, right);
+}
 card_to_team = function(card, color){
-	return {id: card.id, star: card.star, character: card.character, cardname: card.cardname, value: card[color], event: card.event, dupe: card.dupe};
+	return {
+		id: card.id, 
+		star: card.star, 
+		character: card.character, 
+		cardname: card.cardname, 
+		value: card[color], 
+		event: card.event, 
+		dupe: card.dupe,
+		act: card.act
+	};
 }
 card_greater = function(card, color, pivot){
 	var value = event_card_value(card, color);
@@ -46,23 +78,50 @@ calculate_total = function(team, skill, eventgroup){
 		if(data.characters.indexOf(team.members[j].character) !== -1) sum += value;
 	}
 	
-	//find available skills
-	var skill_count = 0;
+	// find available skills
+	var invoked_skills = [];
 	for(var i=0; i<skill.length; i++){
 		var count = 0;
 		var used_members = [];
 		for(var j=0; j < team.members.length; j++){
+			// teammembers is not counted and it is in memberlist of skill
 			if(used_members.indexOf(team.members[j].character) === -1
 				&& skill[i].members.indexOf(team.members[j].character) !== -1){
-				count++;
-				used_members.push(team.members[j].character);
+				
+				// check if act2 skill can invoke
+				if(skill[i].act === 2 && team.members[j].act !== 2);
+				else {
+					count++;
+					used_members.push(team.members[j].character);
+				}				
 			}
 		}
-		if(count == skill[i].members.length && skill_count < 3){
-			buffs *= skill[i].buff;
+
+		var skill_family = skill.filter(function(skl){
+			return skl.name == skill[i].name;
+		});
+		var invoked_sibling = invoked_skills.find(function(skl){
+			skl.name == skill[i].name && skl.act !== skill[i].act;
+		});
+
+		// act1&2 of a skill cannot be invoke at same time, choose the bigger one
+		if(invoked_sibling !== undefined && invoked_sibling.act > skill[i].act);		
+		else if(count == skill[i].members.length && invoked_skills.length < 3){
+
+			// the skill can be invoke!
+			// display act info in skill name
+			var skillname = skill[i].name;
+
+			if(skill_family.length > 1){
+				skillname += skill[i].act.toString();
+			}
+
 			buff_name = (buff_name.length === 0)? skill[i].name: buff_name + '+' + skill[i].name;
-			skill_count++;
-			if(skill_count == 3) break;
+			buffs *= skill[i].buff;
+
+			invoked_skills.push(skill);
+
+			if(invoked_skills.length == 3) break;
 		}
 	};
 
@@ -200,23 +259,37 @@ multiple_skill = function(color, candidate_skills){
 			for(var k = addend_length; k >= 0; k--){
 				var skl = candidate_skills[j];
 				var another_skl = candidate_skills[k];
-				var difference = skl.members.concat(another_skl.members).dupe();
+
+				// new combo skl = skl + another_skl, and remove duplicate members
+				var difference = skl.members.concat(another_skl.members).dupe(); 
+				
 				if(difference.length <= team_limit){
+
+					// check if	new combo skl already exists in candidate_skills	
 					var same = candidate_skills.find(function(exist_skill){
 						var m = util.CopyByValue(exist_skill.members);
+
+						// members are same people
 						if(m.sort().equals(difference.sort())) {
 							var skillnames = exist_skill.name.split("+");
+
 							var skl_skillnames = skl.name.split("+");
 							var another_skl_skillnames = another_skl.name.split("+");
 							var new_name = skl_skillnames.concat(another_skl_skillnames).dupe();
-							if(new_name.length === skl_skillnames.length+another_skl_skillnames.length && new_name.length !== skillnames.length) return false;
+
+							// no duplicate skills in new combo skl, and subskills of new combo skl != subskills of existed one
+							if(new_name.length === skl_skillnames.length + another_skl_skillnames.length
+								&& new_name.length !== skillnames.length) return false;
 							else return true;
 						}
 						else return false;
 					});
+
+					// we have a new combo skl
 					if(same === undefined){
 						var head = 0;
 						for(var k=0; k<difference.length; k++){
+							// find duplicate member in skl and another_skl: move it to the front of member list
 							if(skl.members.indexOf(difference[k]) > -1
 								&& another_skl.members.indexOf(difference[k]) > -1){
 								var tmp = difference[k];
@@ -224,15 +297,18 @@ multiple_skill = function(color, candidate_skills){
 								difference[head] = tmp;
 								head++;
 							}
-						}							
+						}
+						// j >= origin_candidate_length: this combo skl is grouped by multiple skls
 						if(difference.length === skl.members.length && j >= origin_candidate_length){
+							// skl implies another_skl, so we can simply remove skl from candidate
+							// (it is must not the max one)
 							candidate_skills.splice(j, 1);
-							//if(j < origin_candidate_length) origin_candidate_length--;
 							if(j < candidates) candidates--;
 						}
 						if(difference.length === another_skl.members.length && k >= origin_candidate_length){
+							// another_skl implies skl, so we can simply remove another_skl from candidate
+							// (it is must not the max one)
 							candidate_skills.splice(k, 1);
-							//if(k < origin_candidate_length) origin_candidate_length--;
 							if(k < candidates) candidates--;
 						}
 						candidate_skills.push({
@@ -244,12 +320,13 @@ multiple_skill = function(color, candidate_skills){
 				}
 			}
 		}
-		candidate_left = candidates;
-	} while(candidate_left !== candidate_skills.length);
+		candidate_left = candidates; // how many candidates are generated in this loop
+	} while(candidate_left !== candidate_skills.length); // loop until no more candidates is generated
 
+	// only invoke 3 skills at most
 	for(var i=candidate_skills.length - 1; i>=0; i--){
 		var skl = candidate_skills[i].name.split("+");
-		if(skl.length > 3) candidate_skills.splice(i, 1);;
+		if(skl.length > 3) candidate_skills.splice(i, 1);
 	};
 
 	return candidate_skills;
@@ -264,6 +341,7 @@ event_card_value = function(card, color){
 }
 module.exports = {
 	sort_cards,
+	sort_skills,
 	calculate_total,
 	arrange,
 	multiple_skill,

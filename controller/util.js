@@ -7,7 +7,8 @@ const card_template = {
     blue: 0, 
     yellow: 0, 
     event: 0, 
-    dupe: 0
+    dupe: 0,
+    act: 1
 };
 const member_template = {
     id: -1,
@@ -16,7 +17,8 @@ const member_template = {
     cardname: '', 
     value: 0, 
     event: 0, 
-    dupe: 0
+    dupe: 0,
+    act: 1
 };
 const team_template = {
     total: 0,
@@ -97,6 +99,10 @@ IsLegal = function(cards, characters){
         }
         if(!CheckNaturalNum(cards[i].dupe) || cards[i].dupe > 4) {
             return warning.illegal_value;
+        }
+        if(!CheckNaturalNum(cards[i].act) || cards[i].act > 2 || cards[i].act < 1) {
+            if(cards[i].act == undefined) cards[i].act = 1;
+            else return warning.illegal_value;
         }
         if(typeof(cards[i].character) != 'string') return warning.illegal_character;
         
