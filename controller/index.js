@@ -66,12 +66,17 @@ app.controller("CardGroup", ["$scope", function($scope){
 
 		// init data
 		//var characters = database.get_characters();
-		
+
 		$scope.characters = data.characters;
 		$scope.cardcount = $scope.cards.length;
+
 		$scope.redskill = data.redskill;
 		$scope.blueskill = data.blueskill;
 		$scope.yellowskill = data.yellowskill;
+		sort_skills($scope.redskill, 0, $scope.redskill.length-1);
+		sort_skills($scope.blueskill, 0, $scope.blueskill.length-1);
+		sort_skills($scope.yellowskill, 0, $scope.yellowskill.length-1);
+
 		$scope.skill = {'red': $scope.redskill, 'blue': $scope.blueskill, 'yellow': $scope.yellowskill};
 
 		for(var i=0; i<data.characters.length; i++){
