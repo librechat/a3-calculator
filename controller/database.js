@@ -20,7 +20,7 @@ get_characters = function(){
 			fetchNextPage();
 		},
 		function done(err){
-			if(err) console.log(err);
+			if(err) console.log("err: "+err);
 		}
 	);
 
@@ -45,7 +45,7 @@ get_card_names = function(character){
 			fetchNextPage();
 		},
 		function done(err){
-			if(err) console.log(err);
+			if(err) console.log("err: "+err);
 		}
 	);
 	return list;
@@ -71,16 +71,21 @@ get_card_info = function(character, cardname, dupe, callback){
 				},
 				function done(err){
 					if(err){
-						console.log(err);
+						console.log("err: "+err);
 						return next(err, card_info);
 					}
 				}
 			);
 		},
 		function(card_info, record, next){
-			dbase('CardStatRef').find(record.get('LV1 Co'), function(err, stat_record){
+			var co_id = record.get('LV1 Co');
+			if(co_id == undefined) {
+				card_info.yellow = 0;
+				return next(null, card_info, record);
+			}
+			dbase('CardStatRef').find(co_id, function(err, stat_record){
 				if(err){
-					console.log(err);
+					console.log("err: "+err);
 					return next(err, card_info);
 				}
 				var rec = stat_record.get(dupe_statements[dupe]);
@@ -89,9 +94,14 @@ get_card_info = function(character, cardname, dupe, callback){
 			});
 		},
 		function(card_info, record, next){
-			dbase('CardStatRef').find(record.get('LV1 Ac'), function(err, stat_record){
+			var ac_id = record.get('LV1 Ac');
+			if(ac_id == undefined) {
+				card_info.red = 0;
+				return next(null, card_info, record);
+			}
+			dbase('CardStatRef').find(ac_id, function(err, stat_record){
 				if(err){
-					console.log(err);
+					console.log("err: "+err);
 					return next(err, card_info);
 				}
 				var rec = stat_record.get(dupe_statements[dupe]);
@@ -100,9 +110,14 @@ get_card_info = function(character, cardname, dupe, callback){
 			});
 		},
 		function(card_info, record, next){
-			dbase('CardStatRef').find(record.get('LV1 Sr'), function(err, stat_record){
+			var sr_id = record.get('LV1 Sr');
+			if(sr_id == undefined) {
+				card_info.blue = 0;
+				return next(null, card_info, record);
+			}
+			dbase('CardStatRef').find(sr_id, function(err, stat_record){
 				if(err){
-					console.log(err);
+					console.log("err: "+err);
 					return next(err, card_info);
 				}
 				var rec = stat_record.get(dupe_statements[dupe]);
@@ -124,7 +139,7 @@ set_card_info = function(card, setting_callback){
 		}
 	], function(err, card_info){
 		if(err !== null) {
-			console.log(err);
+			console.log("err: "+err);
 			return;
 		}
 		setting_callback(card_info);

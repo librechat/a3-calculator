@@ -171,7 +171,7 @@ app.controller("CardGroup", ["$scope", function($scope){
 		if(event == undefined || event.target == undefined || event.target.files.length == 0) return;
 		var file = event.target.files[0];
 		var filename = file.name;
-		console.log(filename);		
+		console.log("upload: "+filename);		
 		reader.readAsText(file);
 	}
 	$scope.onfileopen = function(file){

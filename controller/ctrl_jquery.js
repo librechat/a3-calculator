@@ -2,7 +2,7 @@ toggle_alert = function(scope, flag, text){
 	var alert = angular.element(document.getElementById('arrangealert'));	
 	if(!flag) {
 		scope.warning_msg = text;
-		console.log(scope.warning_msg);
+		console.log("warning: "+scope.warning_msg);
 		alert.fadeIn();
 	}
 	else {
@@ -17,7 +17,6 @@ clear_selection = function(prefix, index){
 loading_slots = function(prefix, index, loading){
 	var slots = document.getElementsByName(prefix+'-data-'+index);
 	var opacity = (loading)? 0.5: 1;
-	console.log(slots.length);
 	for(var i=0; i<slots.length; i++){
 		var slot = angular.element(slots[i]);
 		slot.fadeTo('normal', opacity);
