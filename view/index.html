@@ -2,6 +2,8 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta meta name="viewport" content="width=device-width, initial-scale=1">
     <title>A3 組隊計算機</title>
     <link href="../include/css/bootstrap.min.css" rel="stylesheet">
     <link href="../css/a3-calculator.css" rel="stylesheet">
@@ -157,10 +159,10 @@
               <table class="table table-bordered text-center white-bg">
                 <tbody>
                   <tr>
-                    <td class="col-md-3"><span>共有</span>
+                    <td class="col-sm-6 col-md-3"><span>共有</span>
                       <input id="cardcount" ng-model="cardcount" type="number" min="1" max="500" ng-blur="changecardcount()" style="width:80px;" class="form-control input-sm"><span>張卡</span>
                     </td>
-                    <td class="col-md-4"><span>同組加成
+                    <td class="col-sm-6 col-md-4"><span>同組加成
                         <select style="padding:1px; width:160px;" ng-model="eventgroup" option-value class="form-control input-sm">
                           <option value="-1">無</option>
                           <option value="0">春組</option>
@@ -168,7 +170,7 @@
                           <option value="2">秋組</option>
                           <option value="3">冬組</option>
                         </select></span></td>
-                    <td class="col-md-5">
+                    <td class="col-sm-12 col-md-5">
                       <div role="group" aria-label="cards-operation" class="btn-group-sm right-align">
                         <input name="cardfile" type="file" id="uploadfile" placeholder="匯入" custom-file-change="upload" class="custom-file-input">
                         <label for="uploadfile" class="btn btn-secondary custom-file-label">匯入</label>

@@ -2,6 +2,8 @@ doctype html
 html
 	head
 		meta(http-equiv="Content-Type" content="text/html; charset=utf-8")
+		meta(http-equiv="X-UA-Compatible" content="IE=edge")
+		meta(meta name="viewport" content="width=device-width, initial-scale=1")
 		title A3 組隊計算機
 		link(href="../include/css/bootstrap.min.css" rel="stylesheet")
 		link(href="../css/a3-calculator.css" rel="stylesheet")
@@ -127,11 +129,11 @@ html
 							table.table.table-bordered.text-center.white-bg
 								tbody
 									tr
-										td.col-md-3
+										td.col-sm-6.col-md-3
 											span 共有
 											input.form-control.input-sm#cardcount(ng-model="cardcount" type="number" min="1" max="500" ng-blur="changecardcount()" style="width:80px;")
 											span 張卡
-										td.col-md-4
+										td.col-sm-6.col-md-4
 											span 同組加成
 												select.form-control.input-sm(style="padding:1px; width:160px;" ng-model="eventgroup" option-value)
 													option(value=-1) 無
@@ -139,7 +141,7 @@ html
 													option(value=1) 夏組
 													option(value=2) 秋組
 													option(value=3) 冬組
-										td.col-md-5
+										td.col-sm-12.col-md-5
 											.btn-group-sm.right-align(role="group" aria-label="cards-operation")
 												input.custom-file-input(name="cardfile" type="file" id="uploadfile" placeholder="匯入" custom-file-change="upload")
 												label.btn.btn-secondary.custom-file-label(for="uploadfile") 匯入
