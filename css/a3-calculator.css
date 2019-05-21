@@ -15,11 +15,20 @@
 body{
 	overflow-x: hidden;
 }
-.table > tbody > tr > td {
-	vertical-align: middle;
-}
 .table{
 	margin: 0px;
+	vertical-align: middle;
+}
+.tr{
+	margin: 0px;
+	border: 1px solid;
+}
+.td{
+	padding-top: 5px;
+	padding-bottom: 5px;
+	border: 0.5px solid;
+	min-height: 42px;
+	line-height: 30px;
 }
 datalist{
 	display: none;
@@ -28,28 +37,28 @@ caption{
 	border: 1px solid #DDD;
 	border-bottom: 0px;
 }
-.red-line > tbody > tr > td{
+.red-line >  .tr{
 	border-color: #FFA3A0;
 }
-.blue-line > tbody > tr > td{
+.blue-line >  .tr{
 	border-color: #99E1D9;
 }
-.yellow-line > tbody > tr > td{
+.yellow-line >  .tr{
 	border-color: #FFD670;
 }
-.gray-line > caption{
+.gray-line > .tr{
 	border-color: #DDDDDD;
 }
-.red-line > caption{
+.red-line >  .tr > .td{
 	border-color: #FFA3A0;
 }
-.blue-line > caption{
+.blue-line >  .tr > .td{
 	border-color: #99E1D9;
 }
-.yellow-line > caption{
+.yellow-line >  .tr > .td{
 	border-color: #FFD670;
 }
-.gray-line > tbody > tr > td{
+.gray-line > .tr > .td{
 	border-color: #DDDDDD;
 }
 .skillimg{
@@ -57,20 +66,6 @@ caption{
     margin-left: auto;
     margin-right: auto;
     width: 65%;
-}
-.gray-img{
-	display: none;
-}
-.color-img{
-	display: block;
-}
-.tablescroller-line{
-	height: 2px;
-}
-.tablescroller-body{
-	overflow-x:auto;
-	overflow-y:scroll;
-	display:block;
 }
 .tab-content>.active{
 	padding: 5px;
@@ -146,33 +141,6 @@ caption{
 }
 input, button{
 	outline:none !important;
-}
-.tablescroller-body::-webkit-scrollbar {
-	width: 10px;
-}
-.tablescroller-body::-webkit-scrollbar-track {
-	-webkit-border-radius: 0px;
-	border-radius: 0px;
-	margin:0px;
-	background: none;
-}
-.tablescroller-body::-webkit-scrollbar-thumb {
-	-webkit-border-radius: 10px;
-	border-radius: 10px;
-	background: #888888;
-}
-.tablescroller-body::-webkit-scrollbar:vertical:hover, .tablescroller-body::-webkit-scrollbar:vertical:active{
-	width: 10px;
-}
-.tablescroller-body::-webkit-scrollbar-thumb:vertical:hover, .tablescroller-body::-webkit-scrollbar-thumb:vertical:active{
-	-webkit-border-radius: 12px;
-	border-radius: 12px;
-	background: #666666;
-}
-.tablescroller-body::-webkit-scrollbar-button{
-	-webkit-border-radius: 10px;
-	border-radius: 10px;
-	background: #888888;
 }
 .custom-file-input{
 	display:none !important;
