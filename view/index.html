@@ -20,7 +20,10 @@
         <h6>*建議使用電腦瀏覽器*</h6>
         <h6>目前遊戲(3/4更新)存在技能bug，可參考<a href="https://forum.gamer.com.tw/C.php?bsn=31666&amp;snA=332" target="_blank">巴哈討論串</a></h6>
         <div role="group" aria-label="menu" class="btn-group">
-          <button type="button" data-toggle="modal" data-target="#help" class="btn btn-default">說明書</button><a type="button" target="_blank" href="https://docs.google.com/spreadsheets/d/1v6cGRqbCGUNcawIkyI7oO2lUP4YpmZZnqrl8Iw9jons/edit?usp=sharing" class="btn btn-default">問題回報</a>
+          <button type="button" data-toggle="modal" data-target="#help" class="btn btn-default">說明書</button>
+          <button type="button" data-toggle="modal" data-target="#yellowskill" class="btn btn-default">黃組技能</button>
+          <button type="button" data-toggle="modal" data-target="#redskill" class="btn btn-default">紅組技能</button>
+          <button type="button" data-toggle="modal" data-target="#blueskill" class="btn btn-default">藍組技能</button><a type="button" target="_blank" href="https://docs.google.com/spreadsheets/d/1v6cGRqbCGUNcawIkyI7oO2lUP4YpmZZnqrl8Iw9jons/edit?usp=sharing" class="btn btn-default">問題回報</a>
         </div>
         <div id="help" tabindex="-1" role="dialog" aria-labeledby="helpModal" aria-hidden="true" class="modal fade">
           <div role="document" class="modal-dialog">
@@ -47,6 +50,84 @@
                   <li>連線到資料庫有時會有延遲，請耐心等待><</li>
                   <li> <a href="https://airtable.com/shrYnVnCdOJOtBYOy" target="_blank">資料庫</a><span>需要大家熱心的協力完善：</span><a href="https://forum.gamer.com.tw/C.php?bsn=31666&amp;snA=577&amp;tnum=3" target="_blank">傳送門</a></li>
                 </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="yellowskill" tabindex="-1" role="dialog" aria-labeledby="skillModal" aria-hidden="true" class="modal fade">
+          <div ng-controller="CardGroup">
+            <div role="document" class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" data-dismiss="modal" aria-label="Close" class="close">&times;</button>
+                  <h4 class="modal-title">黃組技能一覽</h4>
+                </div>
+                <div class="modal-body content-li">
+                  <table class="table table-bordered text-center yellow-line">
+                    <tr class="yellow-bg">
+                      <td>技能名稱</td>
+                      <td>倍率</td>
+                      <td>成員</td>
+                    </tr>
+                    <tr ng-repeat="skill in yellowskill">
+                      <td>{{skill.name}}</td>
+                      <td>{{skill.buff}}</td>
+                      <td><span ng-repeat="member in skill.members" class="member">{{member}}</span></td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="redskill" tabindex="-1" role="dialog" aria-labeledby="skillModal" aria-hidden="true" class="modal fade">
+          <div ng-controller="CardGroup">
+            <div role="document" class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" data-dismiss="modal" aria-label="Close" class="close">&times;</button>
+                  <h4 class="modal-title">紅組技能一覽</h4>
+                </div>
+                <div class="modal-body content-li">
+                  <table class="table table-bordered text-center red-line">
+                    <tr class="red-bg">
+                      <td>技能名稱</td>
+                      <td>倍率</td>
+                      <td>成員</td>
+                    </tr>
+                    <tr ng-repeat="skill in redskill">
+                      <td>{{skill.name}}</td>
+                      <td>{{skill.buff}}</td>
+                      <td><span ng-repeat="member in skill.members" class="member">{{member}}</span></td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="blueskill" tabindex="-1" role="dialog" aria-labeledby="skillModal" aria-hidden="true" class="modal fade">
+          <div ng-controller="CardGroup">
+            <div role="document" class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" data-dismiss="modal" aria-label="Close" class="close">&times;</button>
+                  <h4 class="modal-title">藍組技能一覽</h4>
+                </div>
+                <div class="modal-body content-li">
+                  <table class="table table-bordered text-center blue-line">
+                    <tr class="blue-bg">
+                      <td>技能名稱</td>
+                      <td>倍率</td>
+                      <td>成員</td>
+                    </tr>
+                    <tr ng-repeat="skill in blueskill">
+                      <td>{{skill.name}}</td>
+                      <td>{{skill.buff}}</td>
+                      <td><span ng-repeat="member in skill.members" class="member">{{member}}</span></td>
+                    </tr>
+                  </table>
+                </div>
               </div>
             </div>
           </div>

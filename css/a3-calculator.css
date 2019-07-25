@@ -257,3 +257,5 @@ input, button{
 	border-top-color: #333;
 	animation: spinner .6s linear infinite;
 }
+span.member:not(:first-of-type):before {content:", ";}
+span.member:empty:before{content:"";}

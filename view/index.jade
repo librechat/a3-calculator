@@ -21,6 +21,9 @@ html
 					a(href="https://forum.gamer.com.tw/C.php?bsn=31666&snA=332" target="_blank") 巴哈討論串
 				.btn-group(role="group" aria-label="menu")
 					button.btn.btn-default(type="button" data-toggle="modal" data-target="#help") 說明書
+					button.btn.btn-default(type="button" data-toggle="modal" data-target="#yellowskill") 黃組技能
+					button.btn.btn-default(type="button" data-toggle="modal" data-target="#redskill") 紅組技能
+					button.btn.btn-default(type="button" data-toggle="modal" data-target="#blueskill") 藍組技能
 					a.btn.btn-default(type="button" target="_blank" href="https://docs.google.com/spreadsheets/d/1v6cGRqbCGUNcawIkyI7oO2lUP4YpmZZnqrl8Iw9jons/edit?usp=sharing") 問題回報
 				.modal.fade#help(tabindex="-1" role="dialog" aria-labeledby="helpModal" aria-hidden="true")
 					.modal-dialog(role="document")
@@ -47,6 +50,60 @@ html
 										a(href="https://airtable.com/shrYnVnCdOJOtBYOy" target="_blank" ) 資料庫
 										span 需要大家熱心的協力完善：
 										a(href="https://forum.gamer.com.tw/C.php?bsn=31666&snA=577&tnum=3" target="_blank" ) 傳送門
+				.modal.fade#yellowskill(tabindex="-1" role="dialog" aria-labeledby="skillModal" aria-hidden="true")
+					div(ng-controller="CardGroup")
+						.modal-dialog(role="document")
+							.modal-content
+								.modal-header
+									button.close(type="button" data-dismiss="modal" aria-label="Close") &times;
+									h4.modal-title 黃組技能一覽
+								.modal-body.content-li
+									table.table.table-bordered.text-center.yellow-line
+										tr.yellow-bg
+											td 技能名稱
+											td 倍率
+											td 成員
+										tr(ng-repeat="skill in yellowskill")
+											td {{skill.name}}
+											td {{skill.buff}}
+											td
+												span.member(ng-repeat="member in skill.members") {{member}}
+				.modal.fade#redskill(tabindex="-1" role="dialog" aria-labeledby="skillModal" aria-hidden="true")
+					div(ng-controller="CardGroup")
+						.modal-dialog(role="document")
+							.modal-content
+								.modal-header
+									button.close(type="button" data-dismiss="modal" aria-label="Close") &times;
+									h4.modal-title 紅組技能一覽
+								.modal-body.content-li
+									table.table.table-bordered.text-center.red-line
+										tr.red-bg
+											td 技能名稱
+											td 倍率
+											td 成員
+										tr(ng-repeat="skill in redskill")
+											td {{skill.name}}
+											td {{skill.buff}}
+											td
+												span.member(ng-repeat="member in skill.members") {{member}}
+				.modal.fade#blueskill(tabindex="-1" role="dialog" aria-labeledby="skillModal" aria-hidden="true")
+					div(ng-controller="CardGroup")
+						.modal-dialog(role="document")
+							.modal-content
+								.modal-header
+									button.close(type="button" data-dismiss="modal" aria-label="Close") &times;
+									h4.modal-title 藍組技能一覽
+								.modal-body.content-li
+									table.table.table-bordered.text-center.blue-line
+										tr.blue-bg
+											td 技能名稱
+											td 倍率
+											td 成員
+										tr(ng-repeat="skill in blueskill")
+											td {{skill.name}}
+											td {{skill.buff}}
+											td
+												span.member(ng-repeat="member in skill.members") {{member}}
 				.modal.fade#loading
 					.modal-dialog.modal-dialog-centered.modal-sm(role="dialog")
 						.modal-content
