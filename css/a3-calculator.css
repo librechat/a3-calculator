@@ -21,13 +21,13 @@ body{
 }
 .tr{
 	margin: 0px;
-	border: 1px solid;
+	border: 0.5px solid;
 }
 .td{
 	padding-top: 5px;
 	padding-bottom: 5px;
 	border: 0.5px solid;
-	min-height: 42px;
+	min-height: 43px;
 	line-height: 30px;
 }
 datalist{
@@ -60,6 +60,18 @@ caption{
 }
 .gray-line > .tr > .td{
 	border-color: #DDDDDD;
+}
+.red-text{
+	color: #FFA3A0;
+}
+.blue-text{
+	color: #99E1D9;
+}
+.yellow-text{
+	color: #FFD670;
+}
+.gray-text{
+	color: #DDDDDD;
 }
 .skillimg{
 	display: block;
@@ -227,3 +239,9 @@ input, button{
 }
 span.member:not(:first-of-type):before {content:", ";}
 span.member:empty:before{content:"";}
+.nopadding {
+   padding-left: 0 !important;
+   padding-right: 0 !important;
+   margin-left: 0 !important;
+   margin-right: 0 !important;
+}
