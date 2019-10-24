@@ -404,7 +404,10 @@ app.controller("CardGroup", ["$scope", function($scope){
 		if(oldValue.length < 3) return;
 
 		var member = $scope.teams[$scope.color].members[index];
-		if($scope.cardnames[newValue].find(function(element){ return element == member.cardname; }) != undefined){
+		if(newValue === "") {
+			$scope.calculate();
+		}
+		else if($scope.cardnames[newValue].find(function(element){ return element == member.cardname; }) !== undefined){
 			jq.loading_slots('member', index, true);
 			database.set_card_info(guest, function(card_info){
 				member.star = card_info.rarity;
@@ -415,7 +418,7 @@ app.controller("CardGroup", ["$scope", function($scope){
 				jq.loading_slots('member', index, false);
 			});
 		}
-		else if($scope.cardnames[oldValue].find(function(element){ return element == member.cardname; }) != undefined){
+		else if($scope.cardnames[oldValue].find(function(element){ return element == member.cardname; }) !== undefined){
 			member.cardname = "";
 			jq.clear_selection('member', index);
 			return;

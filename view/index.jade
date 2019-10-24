@@ -64,10 +64,12 @@ html
 									table.table.text-center
 										tr.yellow-bg
 											td 技能名稱
+											td ACT
 											td 倍率
 											td 成員
 										tr.yellow-line(ng-repeat="skill in yellowskill")
 											td {{skill.name}}
+											td {{skill.act}}
 											td {{skill.buff}}
 											td
 												span.member(ng-repeat="member in skill.members") {{member}}
@@ -82,10 +84,12 @@ html
 									table.table.text-center
 										tr.red-bg
 											td 技能名稱
+											td ACT
 											td 倍率
 											td 成員
 										tr.red-line(ng-repeat="skill in redskill")
 											td {{skill.name}}
+											td {{skill.act}}
 											td {{skill.buff}}
 											td
 												span.member(ng-repeat="member in skill.members") {{member}}
@@ -100,10 +104,12 @@ html
 									table.table.text-center
 										tr.blue-bg
 											td 技能名稱
+											td ACT
 											td 倍率
 											td 成員
 										tr.blue-line(ng-repeat="skill in blueskill")
 											td {{skill.name}}
+											td {{skill.act}}
 											td {{skill.buff}}
 											td
 												span.member(ng-repeat="member in skill.members") {{member}}
@@ -156,8 +162,8 @@ html
 								.td.col-xs-6.col-md-1 星級
 								.td.col-xs-6.col-md-1 開花
 								.td.col-xs-12.col-md-3 數值
+								.td.col-xs-6.col-md-1 ACT
 								.td.col-xs-6.col-md-1 旬卡
-								.td.col-xs-6.col-md-1 編輯
 							.tr.row(ng-repeat="guest in guests track by $index")
 								.td.col-xs-12.col-md-1(ng-class="{0: 'yellow-bg', 1: 'red-bg', 2: 'blue-bg'}[$index]")
 									span 客演
@@ -194,12 +200,14 @@ html
 										.col-md-4.nopadding
 												input.form-control.wide.input-sm.blue-bg(name="{{ 'guest-data-' + $index }}" ng-model="guest.value" type="number" min="0" ng-class="{0:'hide',1:'hide'}[$index]")
 								.td.col-xs-6.col-md-1.nopadding
+									select.form-control.input-sm(style="padding:1px;" ng-model="guest.act" option-value)
+										option(value=1) ACT 1
+										option(value=2) ACT 2
+								.td.col-xs-6.col-md-1.nopadding
 									select.form-control.input-sm(style="padding:1px;" ng-model="guest.event" option-value)
 										option(value=0) 無
 										option(value=1) 旬
 										option(value=2) 小旬
-								.td.col-xs-6.col-md-1
-									span
 						.table.text-center.white-bg.gray-line
 							.tr.row(ng-repeat="card in cards track by $index")
 								.td.col-xs-12.col-sm-12.col-md-1.gray-bg
@@ -236,19 +244,14 @@ html
 										.col-sm-4.crowded-col
 											input.form-control.wide.input-sm.blue-bg(name="{{ 'card-data-' + $index }}" ng-model="card.blue" type="number" min="0")
 								.td.col-xs-6.col-md-1.nopadding
+									select.form-control.input-sm(style="padding:1px;" ng-model="card.act" option-value)
+										option(value=1) ACT 1
+										option(value=2) ACT 2
+								.td.col-xs-6.col-md-1.nopadding
 									select.form-control.input-sm(style="padding:1px;" ng-model="card.event" option-value)
 										option(value=0) 無
 										option(value=1) 旬
 										option(value=2) 小旬
-								.td.col-xs-6.col-md-1.nopadding
-									.crowded-col
-										.btn-group
-											button(type="button" ng-click="addcard($index, true)").btn.btn-default.btn-xs
-												span.glyphicon.glyphicon-plus
-											button(type="button" ng-click="addcard($index, false)").btn.btn-default.btn-xs
-												span.glyphicon.glyphicon-paste
-											button(type="button" ng-click="removecard($index)").btn.btn-default.btn-xs
-												span.glyphicon.glyphicon-minus
 					.tab-pane#team(role="tabpanel")
 						.table.text-center.white-bg(ng-class="{'red': 'red-line', 'blue': 'blue-line', 'yellow': 'yellow-line', 'gray': 'gray-line'}[color]")
 							.tr.row
@@ -285,18 +288,23 @@ html
 											input.form-control.input-sm.combo-input(ng-model="member.cardname" type="text" placeholder="卡片名稱" ng-change="onmemberchange($index)")
 										span  】
 									.row
-										.star.col-xs-4.col-md-4.nopadding(style="padding:1px;")
+										.star.col-xs-6.col-md-6.nopadding(style="padding:1px;")
 											select.form-control.input-sm(name="{{ 'member-data-' + $index }}" style="padding:1px;" ng-model="member.star" option-value)
 												option(value=1) N
 												option(value=2) R
 												option(value=3) SR
 												option(value=4) SSR
-										.card-count.col-xs-4.col-md-4.nopadding(style="padding:1px;")
+										.card-count.col-xs-6.col-md-6.nopadding(style="padding:1px;")
 											select.form-control.input-sm(style="padding:1px;" ng-model="member.dupe" ng-change="calculate(); onmemberchange($index)" option-value)
 												option(value=0) 零花
 												option(value=1) 一花
 												option(value=2) 滿開
-										.buff-card.col-xs-4.col-md-4.nopadding(style="padding: 1px;  line-height:30px;")
+									.row
+										.col-xs-6.col-md-6.nopadding(style="padding: 1px;  line-height:30px;")
+											select.form-control.input-sm(style="padding:1px;" ng-model="member.act" ng-change="calculate()" option-value)
+												option(value=1) ACT 1
+												option(value=2) ACT 2
+										.buff-card.col-xs-6.col-md-6.nopadding(style="padding: 1px;  line-height:30px;")
 											select.form-control.input-sm(style="padding:1px;" ng-model="member.event" ng-change="calculate()" option-value)
 												option(value=0) 無
 												option(value=1) 旬
