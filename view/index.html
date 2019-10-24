@@ -249,7 +249,7 @@
                   </div>
                 </div>
                 <div class="td col-xs-6 col-md-1 nopadding">
-                  <select style="padding:1px;" ng-model="guest.act" option-value class="form-control input-sm">
+                  <select name="{{ 'guest-data-' + $index }}" style="padding:1px;" ng-model="guest.act" ng-change="onguestchange($index)" option-value class="form-control input-sm">
                     <option value="1">ACT 1</option>
                     <option value="2">ACT 2</option>
                   </select>
@@ -310,7 +310,7 @@
                   </div>
                 </div>
                 <div class="td col-xs-6 col-md-1 nopadding">
-                  <select style="padding:1px;" ng-model="card.act" option-value class="form-control input-sm">
+                  <select name="{{ 'card-data-' + $index }}" style="padding:1px;" ng-model="card.act" option-value class="form-control input-sm">
                     <option value="1">ACT 1</option>
                     <option value="2">ACT 2</option>
                   </select>
@@ -376,7 +376,7 @@
                     </div>
                   </div>
                   <div class="row">
-                    <div style="padding: 1px;  line-height:30px;" class="col-xs-6 col-md-6 nopadding">
+                    <div name="{{ 'member-data-' + $index }}" style="padding: 1px;  line-height:30px;" class="col-xs-6 col-md-6 nopadding">
                       <select style="padding:1px;" ng-model="member.act" ng-change="calculate()" option-value class="form-control input-sm">
                         <option value="1">ACT 1</option>
                         <option value="2">ACT 2</option>

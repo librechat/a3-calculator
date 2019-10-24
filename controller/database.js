@@ -59,14 +59,15 @@ get_card_info = function(character, cardname, dupe, callback){
 	async.waterfall([
 		function(next){
 			dbase('Card').select({
-				fields: ['LV1 Co','LV1 Ac','LV1 Sr','rarity'],
+				fields: ['LV1 Co','LV1 Ac','LV1 Sr','rarity','ACT'],
 				filterByFormula: 'AND(name="'+cardname+'",character="'+character+'")',
 				maxRecords: 1
 			}).eachPage(
 				function page(records, fetchNextPage){
 					var rarity = records[0].get('rarity');
-					var star = (rarity === 'SSR')? 4: (rarity === 'SR')? 3: (rarity === 'R')? 2: 1;
-					card_info.rarity = star;
+					var act = records[0].get('ACT');
+					card_info.rarity = (rarity === 'SSR')? 4: (rarity === 'SR')? 3: (rarity === 'R')? 2: 1;
+					card_info.act = (act === 'ACT2')? 2: 1;
 					return next(null, card_info, records[0]);
 				},
 				function done(err){
