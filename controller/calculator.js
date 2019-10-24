@@ -97,33 +97,39 @@ calculate_total = function(team, skill, eventgroup){
 			}
 		}
 
-		var skill_family = skill.filter(function(skl){
-			return skl.name == skill[i].name;
-		});
-		var invoked_sibling = invoked_skills.find(function(skl){
-			skl.name == skill[i].name && skl.act !== skill[i].act;
+		var invoked_sibling_index = invoked_skills.findIndex(function(skl){
+			return skl.name == skill[i].name && skl.act !== skill[i].act;
 		});
 
 		// act1&2 of a skill cannot be invoke at same time, choose the bigger one
-		if(invoked_sibling !== undefined && invoked_sibling.act > skill[i].act);		
+		if(invoked_sibling_index !== -1 && invoked_skills[invoked_sibling_index].act > skill[i].act);		
 		else if(count == skill[i].members.length && invoked_skills.length < 3){
 
-			// the skill can be invoke!
-			// display act info in skill name
-			var skillname = skill[i].name;
-
-			if(skill_family.length > 1){
-				skillname += skill[i].act.toString();
+			// remove the smaller one act1&2 skill
+			if(invoked_sibling_index !== -1) {
+				invoked_skills.splice(invoked_sibling_index,1);
 			}
 
-			buff_name = (buff_name.length === 0)? skill[i].name: buff_name + '+' + skill[i].name;
-			buffs *= skill[i].buff;
-
-			invoked_skills.push(skill);
+			// the skill can be invoke!
+			invoked_skills.push(skill[i]);
 
 			if(invoked_skills.length == 3) break;
 		}
 	};
+
+	for(var i=0; i<invoked_skills.length; i++){
+		var skill_family = skill.filter(function(skl){
+			return skl.name == invoked_skills[i].name;
+		});
+
+		var skillname = invoked_skills[i].name;
+		if(skill_family !== undefined && skill_family.length > 1){
+			skillname += invoked_skills[i].act.toString();
+		}
+
+		buff_name = (i === 0)? skillname: buff_name + '+' + skillname;
+		buffs *= invoked_skills[i].buff;
+	}
 
 	//same team buff: $scope.eventgroup
 	var groupbuff = 0;

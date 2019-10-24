@@ -70,11 +70,13 @@
                   <table class="table text-center">
                     <tr class="yellow-bg">
                       <td>技能名稱</td>
+                      <td>ACT</td>
                       <td>倍率</td>
                       <td>成員</td>
                     </tr>
                     <tr ng-repeat="skill in yellowskill" class="yellow-line">
                       <td>{{skill.name}}</td>
+                      <td>{{skill.act}}</td>
                       <td>{{skill.buff}}</td>
                       <td><span ng-repeat="member in skill.members" class="member">{{member}}</span></td>
                     </tr>
@@ -96,11 +98,13 @@
                   <table class="table text-center">
                     <tr class="red-bg">
                       <td>技能名稱</td>
+                      <td>ACT</td>
                       <td>倍率</td>
                       <td>成員</td>
                     </tr>
                     <tr ng-repeat="skill in redskill" class="red-line">
                       <td>{{skill.name}}</td>
+                      <td>{{skill.act}}</td>
                       <td>{{skill.buff}}</td>
                       <td><span ng-repeat="member in skill.members" class="member">{{member}}</span></td>
                     </tr>
@@ -122,11 +126,13 @@
                   <table class="table text-center">
                     <tr class="blue-bg">
                       <td>技能名稱</td>
+                      <td>ACT</td>
                       <td>倍率</td>
                       <td>成員</td>
                     </tr>
                     <tr ng-repeat="skill in blueskill" class="blue-line">
                       <td>{{skill.name}}</td>
+                      <td>{{skill.act}}</td>
                       <td>{{skill.buff}}</td>
                       <td><span ng-repeat="member in skill.members" class="member">{{member}}</span></td>
                     </tr>
@@ -193,8 +199,8 @@
                 <div class="td col-xs-6 col-md-1">星級</div>
                 <div class="td col-xs-6 col-md-1">開花</div>
                 <div class="td col-xs-12 col-md-3">數值</div>
+                <div class="td col-xs-6 col-md-1">ACT</div>
                 <div class="td col-xs-6 col-md-1">旬卡</div>
-                <div class="td col-xs-6 col-md-1">編輯</div>
               </div>
               <div ng-repeat="guest in guests track by $index" class="tr row">
                 <div ng-class="{0: 'yellow-bg', 1: 'red-bg', 2: 'blue-bg'}[$index]" class="td col-xs-12 col-md-1"><span>客演</span></div>
@@ -243,13 +249,18 @@
                   </div>
                 </div>
                 <div class="td col-xs-6 col-md-1 nopadding">
+                  <select name="{{ 'guest-data-' + $index }}" style="padding:1px;" ng-model="guest.act" ng-change="onguestchange($index)" option-value class="form-control input-sm">
+                    <option value="1">ACT 1</option>
+                    <option value="2">ACT 2</option>
+                  </select>
+                </div>
+                <div class="td col-xs-6 col-md-1 nopadding">
                   <select style="padding:1px;" ng-model="guest.event" option-value class="form-control input-sm">
                     <option value="0">無</option>
                     <option value="1">旬</option>
                     <option value="2">小旬</option>
                   </select>
                 </div>
-                <div class="td col-xs-6 col-md-1"><span></span></div>
               </div>
             </div>
             <div class="table text-center white-bg gray-line">
@@ -299,20 +310,17 @@
                   </div>
                 </div>
                 <div class="td col-xs-6 col-md-1 nopadding">
+                  <select name="{{ 'card-data-' + $index }}" style="padding:1px;" ng-model="card.act" option-value class="form-control input-sm">
+                    <option value="1">ACT 1</option>
+                    <option value="2">ACT 2</option>
+                  </select>
+                </div>
+                <div class="td col-xs-6 col-md-1 nopadding">
                   <select style="padding:1px;" ng-model="card.event" option-value class="form-control input-sm">
                     <option value="0">無</option>
                     <option value="1">旬</option>
                     <option value="2">小旬</option>
                   </select>
-                </div>
-                <div class="td col-xs-6 col-md-1 nopadding">
-                  <div class="crowded-col">
-                    <div class="btn-group">
-                      <button type="button" ng-click="addcard($index, true)" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-plus"></span></button>
-                      <button type="button" ng-click="addcard($index, false)" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-paste"></span></button>
-                      <button type="button" ng-click="removecard($index)" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-minus"></span></button>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -351,7 +359,7 @@
                     </div><span> 】</span>
                   </div>
                   <div class="row">
-                    <div style="padding:1px;" class="star col-xs-4 col-md-4 nopadding">
+                    <div style="padding:1px;" class="star col-xs-6 col-md-6 nopadding">
                       <select name="{{ 'member-data-' + $index }}" style="padding:1px;" ng-model="member.star" option-value class="form-control input-sm">
                         <option value="1">N</option>
                         <option value="2">R</option>
@@ -359,14 +367,22 @@
                         <option value="4">SSR</option>
                       </select>
                     </div>
-                    <div style="padding:1px;" class="card-count col-xs-4 col-md-4 nopadding">
+                    <div style="padding:1px;" class="card-count col-xs-6 col-md-6 nopadding">
                       <select style="padding:1px;" ng-model="member.dupe" ng-change="calculate(); onmemberchange($index)" option-value class="form-control input-sm">
                         <option value="0">零花</option>
                         <option value="1">一花</option>
                         <option value="2">滿開</option>
                       </select>
                     </div>
-                    <div style="padding: 1px;  line-height:30px;" class="buff-card col-xs-4 col-md-4 nopadding">
+                  </div>
+                  <div class="row">
+                    <div name="{{ 'member-data-' + $index }}" style="padding: 1px;  line-height:30px;" class="col-xs-6 col-md-6 nopadding">
+                      <select style="padding:1px;" ng-model="member.act" ng-change="calculate()" option-value class="form-control input-sm">
+                        <option value="1">ACT 1</option>
+                        <option value="2">ACT 2</option>
+                      </select>
+                    </div>
+                    <div style="padding: 1px;  line-height:30px;" class="buff-card col-xs-6 col-md-6 nopadding">
                       <select style="padding:1px;" ng-model="member.event" ng-change="calculate()" option-value class="form-control input-sm">
                         <option value="0">無</option>
                         <option value="1">旬</option>

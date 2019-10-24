@@ -264,6 +264,7 @@ app.controller("CardGroup", ["$scope", function($scope){
 								}
 								guest.value = card_info[key];
 								guest.star = card_info.rarity;
+								guest.act = card_info.act;
 								return callback(null);
 							});
 						}
@@ -294,6 +295,7 @@ app.controller("CardGroup", ["$scope", function($scope){
 								card.red = card_info.red;
 								card.blue = card_info.blue;
 								card.star = card_info.rarity;
+								card.act = card_info.act;
 								return callback(null);
 							});
 						}
@@ -329,6 +331,7 @@ app.controller("CardGroup", ["$scope", function($scope){
 			database.set_card_info(guest, function(card_info){
 				guest.value = card_info[color];
 				guest.star = card_info.rarity;
+				guest.act = card_info.act;
 				$scope.$apply();
 				jq.loading_slots('guest', index, false);
 			});
@@ -350,6 +353,7 @@ app.controller("CardGroup", ["$scope", function($scope){
 			database.set_card_info(guest, function(card_info){
 				guest.value = card_info[color];
 				guest.star = card_info.rarity;
+				guest.act = card_info.act;
 				$scope.$apply();
 				jq.loading_slots('guest', index, false);
 			});
@@ -369,6 +373,7 @@ app.controller("CardGroup", ["$scope", function($scope){
 				card.red = card_info.red;
 				card.blue = card_info.blue;
 				card.star = card_info.rarity;
+				card.act = card_info.act;
 				$scope.$apply();
 				jq.loading_slots('card', index, false);
 			});
@@ -391,6 +396,7 @@ app.controller("CardGroup", ["$scope", function($scope){
 				card.red = card_info.red;
 				card.blue = card_info.blue;
 				card.star = card_info.rarity;
+				card.act = card_info.act;
 				$scope.$apply();
 				jq.loading_slots('card', index, false);
 			});
@@ -404,10 +410,14 @@ app.controller("CardGroup", ["$scope", function($scope){
 		if(oldValue.length < 3) return;
 
 		var member = $scope.teams[$scope.color].members[index];
-		if($scope.cardnames[newValue].find(function(element){ return element == member.cardname; }) != undefined){
+		if(newValue === "") {
+			$scope.calculate();
+		}
+		else if($scope.cardnames[newValue].find(function(element){ return element == member.cardname; }) !== undefined){
 			jq.loading_slots('member', index, true);
 			database.set_card_info(guest, function(card_info){
 				member.star = card_info.rarity;
+				member.act = card_info.act;
 				var pre_value = member.value;
 				member.value = card_info[$scope.color];
 				if(pre_value != member.value) $scope.calculate();
@@ -415,7 +425,7 @@ app.controller("CardGroup", ["$scope", function($scope){
 				jq.loading_slots('member', index, false);
 			});
 		}
-		else if($scope.cardnames[oldValue].find(function(element){ return element == member.cardname; }) != undefined){
+		else if($scope.cardnames[oldValue].find(function(element){ return element == member.cardname; }) !== undefined){
 			member.cardname = "";
 			jq.clear_selection('member', index);
 			return;
@@ -430,6 +440,7 @@ app.controller("CardGroup", ["$scope", function($scope){
 			jq.loading_slots('member', index, true);
 			database.set_card_info(member, function(card_info){
 				member.star = card_info.rarity;
+				member.act = card_info.act;
 				var pre_value = member.value;
 				member.value = card_info[$scope.color];
 				if(pre_value != member.value) $scope.calculate();
