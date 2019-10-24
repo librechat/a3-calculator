@@ -209,8 +209,8 @@ html
 										option(value=1) 旬
 										option(value=2) 小旬
 						.table.text-center.white-bg.gray-line
-							.tr.row(ng-repeat="card in cards track by $index")
-								.td.col-xs-12.col-sm-12.col-md-1.gray-bg
+							.tr.row.pinned(ng-repeat="card in cards track by $index")
+								.td.col-xs-12.col-sm-12.col-md-1.gray-bg.nopadding
 									span {{$index+1}}
 								.td.col-xs-12.col-sm-6.col-md-2
 									select.form-control.input-sm(ng-model="card.character" type="text" ng-change="oncardcharacterchange(card.character, '{{card.character}}', $index)")
@@ -252,6 +252,16 @@ html
 										option(value=0) 無
 										option(value=1) 旬
 										option(value=2) 小旬
+								span.pin-btn-group-top
+									button(type="button" ng-click="addcard($index-1, true)").btn.btn-primary.btn-circle.pin-btn
+										span.glyphicon.glyphicon-plus
+									button(type="button" ng-click="removecard($index)").btn.btn-danger.btn-circle.pin-btn
+										span.glyphicon.glyphicon-remove
+								span(ng-class="$index == cards.length-1? 'pin-btn-group-bottom': 'hidden'")
+									button(type="button" ng-click="addcard($index, true)").btn.btn-primary.btn-circle.pin-btn
+										span.glyphicon.glyphicon-plus
+									button(type="button").btn.btn-danger.btn-circle.pin-btn.hidden-box
+										span.glyphicon.glyphicon-remove					
 					.tab-pane#team(role="tabpanel")
 						.table.text-center.white-bg(ng-class="{'red': 'red-line', 'blue': 'blue-line', 'yellow': 'yellow-line', 'gray': 'gray-line'}[color]")
 							.tr.row
@@ -260,7 +270,7 @@ html
 								.td.col-xs-6.col-md-1
 									span(ng-bind="teams[color].total")
 								.td.col-xs-4.col-md-1
-									span 加成倍率
+									span 倍率
 								.td.col-xs-4.col-md-2
 									span 連鎖 
 									span(ng-bind="teams[color].skillbuff")

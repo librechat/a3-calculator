@@ -264,8 +264,8 @@
               </div>
             </div>
             <div class="table text-center white-bg gray-line">
-              <div ng-repeat="card in cards track by $index" class="tr row">
-                <div class="td col-xs-12 col-sm-12 col-md-1 gray-bg"><span>{{$index+1}}</span></div>
+              <div ng-repeat="card in cards track by $index" class="tr row pinned">
+                <div class="td col-xs-12 col-sm-12 col-md-1 gray-bg nopadding"><span>{{$index+1}}</span></div>
                 <div class="td col-xs-12 col-sm-6 col-md-2">
                   <select ng-model="card.character" type="text" ng-change="oncardcharacterchange(card.character, '{{card.character}}', $index)" class="form-control input-sm">
                     <option value="" disabled selected>選擇角色</option>
@@ -321,7 +321,11 @@
                     <option value="1">旬</option>
                     <option value="2">小旬</option>
                   </select>
-                </div>
+                </div><span class="pin-btn-group-top">
+                  <button type="button" ng-click="addcard($index-1, true)" class="btn btn-primary btn-circle pin-btn"><span class="glyphicon glyphicon-plus"></span></button>
+                  <button type="button" ng-click="removecard($index)" class="btn btn-danger btn-circle pin-btn"><span class="glyphicon glyphicon-remove"></span></button></span><span ng-class="$index == cards.length-1? 'pin-btn-group-bottom': 'hidden'">
+                  <button type="button" ng-click="addcard($index, true)" class="btn btn-primary btn-circle pin-btn"><span class="glyphicon glyphicon-plus"></span></button>
+                  <button type="button" class="btn btn-danger btn-circle pin-btn hidden-box"><span class="glyphicon glyphicon-remove">					</span></button></span>
               </div>
             </div>
           </div>
@@ -330,7 +334,7 @@
               <div class="tr row">
                 <div class="td col-xs-6 col-md-1"><span>合計值</span></div>
                 <div class="td col-xs-6 col-md-1"><span ng-bind="teams[color].total"></span></div>
-                <div class="td col-xs-4 col-md-1"><span>加成倍率</span></div>
+                <div class="td col-xs-4 col-md-1"><span>倍率</span></div>
                 <div class="td col-xs-4 col-md-2"><span>連鎖 </span><span ng-bind="teams[color].skillbuff"></span></div>
                 <div class="td col-xs-4 td col-md-2"><span>同組 </span><span ng-bind="teams[color].groupbuff"></span></div>
                 <div class="td col-xs-12 col-md-5"><span ng-bind="teams[color].skillname"></span></div>
