@@ -171,7 +171,7 @@ const blueskill = [
 		act: 1
 	},
 	{
-		name: '葉星大學組2',
+		name: '葉星大學組',
 		buff: 1.27,
 		members: ['皆木 綴','伏見 臣', '兵頭 十座'],
 		act: 2
@@ -287,7 +287,7 @@ const yellowskill = [
 		act: 1
 	},
 	{
-		name: '飛特族2',
+		name: '飛特族',
 		buff: 1.51,
 		members: ['斑鳩 三角','月岡 紬','雪白 東', '佐久間 咲也', '御影 密'],
 		act: 2
