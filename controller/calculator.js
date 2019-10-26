@@ -156,25 +156,55 @@ arrange = function(color, cards, skill, origin_skill, usedcards_index, guest, ev
 			(skl.members.indexOf(guest.character) === -1 && data.characters.indexOf(guest.character))) return false;
 		else return true;
 	});
-	skill.forEach(function(value){
-		//value.members, value.buff
+
+	skill.forEach(function(skl){
 		var skillteam = util.CopyByValue(util.Const.team_template);
+		var skill_names = skl.name.split("+");
 		var add_guest = false;
 
-		value.members.forEach(function(member){
+		var subskills = origin_skill.filter(function(origin_skl){
+			var skl = skill_names.findIndex(function(skl_name){
+				if(skl_name === origin_skl.name) return true;
+				else if(skl_name === origin_skl.name + origin_skl.act.toString()) return true;
+				else return false;
+			});
+			if(skl !== -1) return true;
+			else return false;
+		});
+
+		var act2_members = skl.members.filter(function(mem){
+			var mem_in_act2 = subskills.findIndex(function(subskl){
+				if(subskl.act === 2 && subskl.members.indexOf(mem) !== -1) return true;
+				else return false;
+			});
+			if(mem_in_act2 === -1) return false;
+			else return true;
+		});
+
+		skl.members.forEach(function(member){
+			var is_act2member = (act2_members.indexOf(member) !== -1);
 
 			var first_id = cards.findIndex(function(card){
-				return card.character === member && usedcards_index.indexOf(card.id) === -1;
+				if(card.character !== member) return false;
+				else if (usedcards_index.indexOf(card.id) !== -1) return false;
+				else {
+					// if the skill is act2 then must select act2 card
+					if(is_act2member){
+						if(card.act !== 2) return false;
+						else return true;
+					}
+					else return true;
+				}
 			});
 			if(first_id === -1 || usedcards_index.indexOf(cards[first_id].id) !== -1) return;
 			
 			var mem = card_to_team(cards[first_id], color);
-			if(guest.character === mem.character) {
+			if(guest.character === mem.character && (!is_act2member || guest.act === 2)) {
 				// choose guest instead of our member
 				// or the slot must remain for guest
-				if(mem.value < guest.value ||  value.members.length === 6 ){
+				if(mem.value < guest.value ||  skl.members.length === 6 ){
 					add_guest = true;
-					return;
+					return;					
 				}
 				else;
 			}
@@ -182,14 +212,14 @@ arrange = function(color, cards, skill, origin_skill, usedcards_index, guest, ev
 			return;
 		});
 		
-		if(value.members.length > skillteam.members.length
+		if(skl.members.length > skillteam.members.length
 			&& skillteam.members.indexOf(guest.character) === -1
-			&& value.members.indexOf(guest.character) !== -1){
+			&& skl.members.indexOf(guest.character) !== -1){
 			add_guest = true;
 		}
-		if((skillteam.members.length === value.members.length && skillteam.members.length < 6)|| add_guest){
-			skillteam.skillname = value.name;
-			skillteam.skillbuff = value.buff;
+		if((skillteam.members.length === skl.members.length && skillteam.members.length < 6) || add_guest){
+			skillteam.skillname = skl.name;
+			skillteam.skillbuff = skl.buff;
 			ableteam.push(skillteam);
 		}
 		else; //impossible team skills
@@ -202,10 +232,11 @@ arrange = function(color, cards, skill, origin_skill, usedcards_index, guest, ev
 		while(team.members.length < 5 && max_id < cards.length) {
 			if(team.members.findIndex(function(member){
 				return member.id == cards[max_id].id;
-			}) === -1 && usedcards_index.indexOf(cards[max_id].id) === -1){ //it is ok for duplicated cards in a3
+			}) === -1 && usedcards_index.indexOf(cards[max_id].id) === -1){
+				//it is ok for duplicated cards in a3
 				team.members.push(card_to_team(cards[max_id], color));
 			}
-			else max_id++;		
+			else max_id++;	
 		}
 		team.members.push(guest);
 	});
@@ -254,6 +285,18 @@ arrange = function(color, cards, skill, origin_skill, usedcards_index, guest, ev
 multiple_skill = function(color, candidate_skills){
 	var team_limit = 6;
 
+	for(var i=0; i < candidate_skills.length; i++){
+		var dupe = candidate_skills.filter(function(skl){
+			if(skl.name === candidate_skills[i].name) return true;
+			else return false;
+		});
+		if(dupe.length > 1){
+			for (var j=0; j<dupe.length; j++){
+				dupe[j].name = dupe[j].name + dupe[j].act.toString();
+			}
+		}
+	}
+
 	//prepare multiple skill
 	var candidate_left = 0;
 	var origin_candidate_length = candidate_skills.length;
@@ -261,13 +304,15 @@ multiple_skill = function(color, candidate_skills){
 	do {
 		var candidates = candidate_skills.length;
 		for(var j = candidates-1; j >= candidate_left; j--){
-			var addend_length = (j < origin_candidate_length)? j-1: origin_candidate_length-1;			
+
+			var addend_length = (j < origin_candidate_length)? j-1: origin_candidate_length-1;
+
 			for(var k = addend_length; k >= 0; k--){
 				var skl = candidate_skills[j];
 				var another_skl = candidate_skills[k];
 
 				// new combo skl = skl + another_skl, and remove duplicate members
-				var difference = skl.members.concat(another_skl.members).dupe(); 
+				var difference = skl.members.concat(another_skl.members).dupe();
 				
 				if(difference.length <= team_limit){
 
@@ -277,16 +322,27 @@ multiple_skill = function(color, candidate_skills){
 
 						// members are same people
 						if(m.sort().equals(difference.sort())) {
-							var skillnames = exist_skill.name.split("+");
+							var skillnames = exist_skill.name.split("+").sort();
 
 							var skl_skillnames = skl.name.split("+");
 							var another_skl_skillnames = another_skl.name.split("+");
-							var new_name = skl_skillnames.concat(another_skl_skillnames).dupe();
+							var new_name = skl_skillnames.concat(another_skl_skillnames).dupe().sort();
 
-							// no duplicate skills in new combo skl, and subskills of new combo skl != subskills of existed one
-							if(new_name.length === skl_skillnames.length + another_skl_skillnames.length
-								&& new_name.length !== skillnames.length) return false;
-							else return true;
+							var act = another_skl.name[another_skl.name.length-1];
+							if(act >= '0' && act <= '9'){
+								var dupe_act_skill = new_name.filter(function(name){
+									var act_name = name[name.length-1];
+									if(act_name >= '0' && act_name <= '9' && act_name != act) return true;
+									else return false;
+								});
+								if(dupe_act_skill.length > 0) return true;
+							}
+
+							// no duplicate skills in new combo skl
+							if(new_name.length !== skl_skillnames.length + another_skl_skillnames.length) return true;
+							// subskills of new combo skl != subskills of existed one
+							else if(skillnames.equals(new_name)) return true;
+							else return false;
 						}
 						else return false;
 					});
@@ -294,34 +350,34 @@ multiple_skill = function(color, candidate_skills){
 					// we have a new combo skl
 					if(same === undefined){
 						var head = 0;
-						for(var k=0; k<difference.length; k++){
+						for(var t=0; t<difference.length; t++){
 							// find duplicate member in skl and another_skl: move it to the front of member list
-							if(skl.members.indexOf(difference[k]) > -1
+							if(skl.members.indexOf(difference[t]) > -1
 								&& another_skl.members.indexOf(difference[k]) > -1){
-								var tmp = difference[k];
-								difference[k] = difference[head];
+								var tmp = difference[t];
+								difference[t] = difference[head];
 								difference[head] = tmp;
 								head++;
 							}
 						}
+
+						var new_candidate_skill = {
+							name: skl.name +"+"+another_skl.name,
+							members: difference,
+							buff: skl.buff * another_skl.buff
+						};
+						
 						// j >= origin_candidate_length: this combo skl is grouped by multiple skls
-						if(difference.length === skl.members.length && j >= origin_candidate_length){
-							// skl implies another_skl, so we can simply remove skl from candidate
+						if(new_candidate_skill.members.length === skl.members.length
+							&& skl.buff < new_candidate_skill.buff
+							&& j >= origin_candidate_length){
+							// skl implies another_skl, so we can simply remove (skl only) from candidate
 							// (it is must not the max one)
 							candidate_skills.splice(j, 1);
 							if(j < candidates) candidates--;
 						}
-						if(difference.length === another_skl.members.length && k >= origin_candidate_length){
-							// another_skl implies skl, so we can simply remove another_skl from candidate
-							// (it is must not the max one)
-							candidate_skills.splice(k, 1);
-							if(k < candidates) candidates--;
-						}
-						candidate_skills.push({
-							name: skl.name +"+"+another_skl.name,
-							members: difference,
-							buff: skl.buff * another_skl.buff
-						});
+
+						candidate_skills.push(new_candidate_skill);
 					}
 				}
 			}
@@ -334,7 +390,7 @@ multiple_skill = function(color, candidate_skills){
 		var skl = candidate_skills[i].name.split("+");
 		if(skl.length > 3) candidate_skills.splice(i, 1);
 	};
-
+	//console.log(candidate_skills);
 	return candidate_skills;
 }
 event_card_value = function(card, color){
