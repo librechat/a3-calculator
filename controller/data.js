@@ -155,13 +155,13 @@ const redskill = [
 		buff: 1.12,
 		members: ['月岡 紬', '涯'],
 		act: 1
-	}/*,
+	},
 	{
 		name: '未來的王子育成中',
 		buff: 1.15,
 		members: ['向坂 椋', '涯'],
 		act: 2
-	}*/
+	}
 ];
 const blueskill = [
 	{
